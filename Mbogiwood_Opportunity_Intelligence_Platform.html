@@ -1,0 +1,3080 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mbogiwood · Opportunity Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+  MBOGIWOOD OPPORTUNITY INTELLIGENCE PLATFORM
+  Architecture: App (state) → Render (engine) → Pages (views)
+  Brand: Mbogiwood Productions — dark, premium, cinematic
+  Fonts: Cormorant Garamond (display) + DM Sans (body) + DM Mono (numbers)
+  Version: 2.0.0
+============================================================ -->
+
+<style>
+/* ════════════════════════════════════════════════════════════
+   DESIGN TOKENS — MBOGIWOOD BRAND SYSTEM
+   Palette derived from logo: deep mahogany, forest green,
+   signal red, saffron gold, chalk white
+   ════════════════════════════════════════════════════════════ */
+:root {
+  /* Brand Palette */
+  --brand-green:     #2db84b;
+  --brand-green-dim: rgba(45,184,75,.14);
+  --brand-green-glow:rgba(45,184,75,.28);
+  --brand-red:       #cc2828;
+  --brand-red-dim:   rgba(204,40,40,.13);
+  --brand-gold:      #f0a020;
+  --brand-gold-dim:  rgba(240,160,32,.13);
+  --brand-mahogany:  #2a0f05;
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body:    'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:    'DM Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* Spacing scale */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;
+  --s6:24px;--s8:32px;--s10:40px;--s12:48px;--s16:64px;
+
+  /* Radius */
+  --r-xs:4px;--r-sm:6px;--r-md:10px;--r-lg:16px;--r-xl:24px;--r-full:9999px;
+
+  /* Transitions */
+  --ease:   cubic-bezier(.16,1,.3,1);
+  --ease-in:cubic-bezier(.4,0,1,1);
+  --t-fast: 110ms;--t-mid:210ms;--t-slow:360ms;
+
+  /* Layout */
+  --sidebar-w: 248px;
+  --topbar-h:  60px;
+}
+
+/* ── DARK THEME (default) ── */
+[data-theme="dark"] {
+  --bg-base:     #0c0804;
+  --bg-surface:  #130c05;
+  --bg-elevated: #1c1208;
+  --bg-overlay:  #241809;
+  --bg-hover:    rgba(255,255,255,.04);
+  --bg-active:   rgba(255,255,255,.07);
+  --bg-glass:    rgba(19,12,5,.8);
+
+  --border-faint:  rgba(240,160,32,.06);
+  --border-subtle: rgba(240,160,32,.1);
+  --border-default:rgba(240,160,32,.16);
+  --border-strong: rgba(240,160,32,.28);
+
+  --text-primary:   #f2ece4;
+  --text-secondary: rgba(242,236,228,.62);
+  --text-muted:     rgba(242,236,228,.38);
+  --text-dim:       rgba(242,236,228,.2);
+
+  --accent:         var(--brand-green);
+  --accent-dim:     var(--brand-green-dim);
+  --accent-glow:    var(--brand-green-glow);
+  --accent-hover:   #38d45c;
+
+  --gold:           var(--brand-gold);
+  --gold-dim:       var(--brand-gold-dim);
+  --red:            var(--brand-red);
+  --red-dim:        var(--brand-red-dim);
+  --amber:          #e87828;
+  --amber-dim:      rgba(232,120,40,.13);
+  --blue:           #4090d8;
+  --blue-dim:       rgba(64,144,216,.13);
+  --violet:         #8868d8;
+  --violet-dim:     rgba(136,104,216,.13);
+
+  --score-high:  #2db84b;
+  --score-med:   #f0a020;
+  --score-low:   #cc2828;
+  --score-cond:  #e87828;
+
+  --shadow-sm:  0 1px 4px rgba(0,0,0,.5);
+  --shadow-md:  0 4px 20px rgba(0,0,0,.6);
+  --shadow-lg:  0 16px 50px rgba(0,0,0,.7);
+  --shadow-glow:0 0 40px var(--brand-green-glow);
+}
+
+/* ── LIGHT THEME ── */
+[data-theme="light"] {
+  --bg-base:     #f5f0ea;
+  --bg-surface:  #ffffff;
+  --bg-elevated: #faf7f3;
+  --bg-overlay:  #f0ebe2;
+  --bg-hover:    rgba(0,0,0,.03);
+  --bg-active:   rgba(0,0,0,.06);
+  --bg-glass:    rgba(255,255,255,.85);
+
+  --border-faint:  rgba(42,15,5,.05);
+  --border-subtle: rgba(42,15,5,.08);
+  --border-default:rgba(42,15,5,.13);
+  --border-strong: rgba(42,15,5,.22);
+
+  --text-primary:   #1a0d05;
+  --text-secondary: rgba(26,13,5,.62);
+  --text-muted:     rgba(26,13,5,.4);
+  --text-dim:       rgba(26,13,5,.22);
+
+  --accent:         #1d9038;
+  --accent-dim:     rgba(29,144,56,.1);
+  --accent-glow:    rgba(29,144,56,.2);
+  --accent-hover:   #2db84b;
+
+  --gold:           #c07010;
+  --gold-dim:       rgba(192,112,16,.1);
+  --red:            #a81e1e;
+  --red-dim:        rgba(168,30,30,.1);
+  --amber:          #c05818;
+  --amber-dim:      rgba(192,88,24,.1);
+  --blue:           #2468b0;
+  --blue-dim:       rgba(36,104,176,.1);
+  --violet:         #5840b0;
+  --violet-dim:     rgba(88,64,176,.1);
+
+  --score-high:  #1d9038;
+  --score-med:   #c07010;
+  --score-low:   #a81e1e;
+  --score-cond:  #c05818;
+
+  --shadow-sm:  0 1px 4px rgba(0,0,0,.08);
+  --shadow-md:  0 4px 16px rgba(0,0,0,.1);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,.15);
+  --shadow-glow:0 0 30px rgba(29,144,56,.15);
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESET & BASE
+   ════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  background:var(--bg-base);
+  color:var(--text-primary);
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;font-size:inherit}
+img{display:block;max-width:100%}
+::selection{background:var(--accent-dim);color:var(--text-primary)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px}
+
+/* ════════════════════════════════════════════════════════════
+   APP SHELL
+   ════════════════════════════════════════════════════════════ */
+#shell{
+  display:grid;
+  grid-template-columns:var(--sidebar-w) 1fr;
+  grid-template-rows:100vh;
+  height:100vh;
+  overflow:hidden;
+  transition:grid-template-columns var(--t-slow) var(--ease);
+}
+#shell.collapsed{grid-template-columns:64px 1fr}
+#shell.mobile-open #sidebar{transform:translateX(0)}
+
+/* ════════════════════════════════════════════════════════════
+   SIDEBAR
+   ════════════════════════════════════════════════════════════ */
+#sidebar{
+  background:var(--bg-surface);
+  border-right:1px solid var(--border-faint);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  position:relative;
+  z-index:60;
+}
+#shell.collapsed #sidebar .nav-label,
+#shell.collapsed .sidebar-section-label,
+#shell.collapsed .logo-wordmark,
+#shell.collapsed .sidebar-footer-text,
+#shell.collapsed .nav-badge{display:none}
+#shell.collapsed #sidebar{align-items:center}
+#shell.collapsed .nav-item{justify-content:center;padding:10px}
+#shell.collapsed .nav-icon{margin:0}
+
+/* Logo */
+.sidebar-logo{
+  display:flex;align-items:center;gap:var(--s3);
+  padding:var(--s5) var(--s5) var(--s4);
+  border-bottom:1px solid var(--border-faint);
+  flex-shrink:0;
+}
+.logo-mark{
+  width:36px;height:36px;border-radius:var(--r-md);
+  background:linear-gradient(135deg,#1a0800 0%,#2a1004 100%);
+  border:1px solid var(--border-default);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  position:relative;
+  overflow:hidden;
+}
+.logo-mark::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 50%,var(--brand-green) 0%,transparent 60%);
+  opacity:.18;
+}
+.logo-play{
+  width:14px;height:14px;
+  background:var(--brand-green);
+  clip-path:polygon(15% 8%,15% 92%,92% 50%);
+  position:relative;z-index:1;
+}
+.logo-wordmark{
+  display:flex;flex-direction:column;line-height:1;
+}
+.logo-name{
+  font-family:var(--font-display);
+  font-size:17px;font-weight:600;
+  color:var(--text-primary);letter-spacing:-.3px;
+}
+.logo-name span{color:var(--brand-green)}
+.logo-sub{
+  font-size:9.5px;font-weight:600;
+  color:var(--text-muted);letter-spacing:1.2px;
+  text-transform:uppercase;margin-top:2px;
+}
+
+/* Sidebar nav */
+.sidebar-nav{flex:1;overflow-y:auto;padding:var(--s3) var(--s2)}
+.sidebar-section-label{
+  font-size:9.5px;font-weight:700;
+  color:var(--text-dim);letter-spacing:1.4px;
+  text-transform:uppercase;
+  padding:var(--s4) var(--s3) var(--s2);
+}
+.nav-item{
+  display:flex;align-items:center;gap:var(--s3);
+  padding:9px var(--s3);
+  border-radius:var(--r-md);
+  cursor:pointer;
+  color:var(--text-secondary);
+  font-size:13.5px;font-weight:400;
+  transition:all var(--t-fast) var(--ease);
+  position:relative;
+  margin-bottom:2px;
+  user-select:none;
+}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-primary)}
+.nav-item.active{
+  background:var(--accent-dim);
+  color:var(--accent);font-weight:600;
+}
+.nav-item.active::before{
+  content:'';
+  position:absolute;left:0;top:20%;bottom:20%;
+  width:3px;border-radius:2px;
+  background:var(--accent);
+}
+.nav-icon{
+  font-size:15px;flex-shrink:0;
+  width:20px;text-align:center;
+}
+.nav-label{flex:1;white-space:nowrap;overflow:hidden}
+.nav-badge{
+  font-size:10px;font-weight:700;
+  background:var(--brand-red);color:#fff;
+  padding:1px 6px;border-radius:var(--r-full);
+  min-width:18px;text-align:center;
+}
+.nav-badge.green{background:var(--accent)}
+
+/* Sidebar footer */
+.sidebar-footer{
+  padding:var(--s4);border-top:1px solid var(--border-faint);
+  flex-shrink:0;
+}
+.sidebar-footer-btn{
+  display:flex;align-items:center;gap:var(--s3);
+  padding:8px var(--s3);border-radius:var(--r-md);
+  cursor:pointer;color:var(--text-muted);font-size:13px;
+  transition:all var(--t-fast);width:100%;background:none;border:none;
+}
+.sidebar-footer-btn:hover{background:var(--bg-hover);color:var(--text-primary)}
+.sidebar-footer-text{white-space:nowrap;overflow:hidden}
+
+/* Collapse button */
+.collapse-btn{
+  position:absolute;right:-12px;top:72px;
+  width:24px;height:24px;border-radius:var(--r-full);
+  background:var(--bg-elevated);border:1px solid var(--border-default);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:10px;color:var(--text-muted);
+  transition:all var(--t-fast);z-index:10;
+}
+.collapse-btn:hover{background:var(--bg-overlay);color:var(--text-primary)}
+
+/* ════════════════════════════════════════════════════════════
+   MAIN CONTENT AREA
+   ════════════════════════════════════════════════════════════ */
+#main{
+  display:flex;flex-direction:column;
+  overflow:hidden;background:var(--bg-base);
+}
+
+/* ── Topbar ── */
+#topbar{
+  height:var(--topbar-h);flex-shrink:0;
+  background:var(--bg-surface);
+  border-bottom:1px solid var(--border-faint);
+  display:flex;align-items:center;
+  padding:0 var(--s6);gap:var(--s4);
+  position:relative;z-index:40;
+}
+.topbar-title{
+  flex:1;min-width:0;
+}
+.topbar-page-name{
+  font-family:var(--font-display);
+  font-size:21px;font-weight:600;
+  color:var(--text-primary);letter-spacing:-.2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.topbar-page-sub{
+  font-size:12px;color:var(--text-muted);margin-top:1px;
+}
+.topbar-actions{display:flex;align-items:center;gap:var(--s2)}
+
+/* Global search */
+.search-wrap{
+  position:relative;display:flex;align-items:center;
+}
+.search-input{
+  width:240px;padding:7px 14px 7px 36px;
+  background:var(--bg-elevated);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--r-full);
+  color:var(--text-primary);font-size:13px;
+  transition:all var(--t-mid);outline:none;
+}
+.search-input:focus{
+  width:300px;border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-dim);
+}
+.search-input::placeholder{color:var(--text-muted)}
+.search-icon{
+  position:absolute;left:12px;
+  font-size:13px;color:var(--text-muted);
+  pointer-events:none;
+}
+.search-kbd{
+  position:absolute;right:10px;
+  font-size:10px;color:var(--text-dim);
+  background:var(--bg-overlay);border:1px solid var(--border-subtle);
+  padding:1px 5px;border-radius:3px;pointer-events:none;
+  font-family:var(--font-mono);
+}
+.search-dropdown{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;
+  background:var(--bg-elevated);
+  border:1px solid var(--border-default);
+  border-radius:var(--r-md);
+  box-shadow:var(--shadow-lg);
+  z-index:200;display:none;
+  overflow:hidden;max-height:320px;overflow-y:auto;
+}
+
+/* Topbar icon buttons */
+.topbar-btn{
+  width:36px;height:36px;border-radius:var(--r-md);
+  border:1px solid var(--border-subtle);
+  background:var(--bg-elevated);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-secondary);
+  font-size:15px;transition:all var(--t-fast);
+  position:relative;flex-shrink:0;
+}
+.topbar-btn:hover{
+  background:var(--bg-overlay);
+  border-color:var(--border-default);
+  color:var(--text-primary);
+}
+.notif-badge{
+  position:absolute;top:-4px;right:-4px;
+  width:16px;height:16px;border-radius:var(--r-full);
+  background:var(--brand-red);color:#fff;
+  font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Menu btn (mobile) */
+.menu-btn{
+  display:none;width:36px;height:36px;
+  align-items:center;justify-content:center;
+  cursor:pointer;background:none;border:none;
+  color:var(--text-primary);font-size:18px;
+  flex-shrink:0;
+}
+
+/* Page content */
+#page-content{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:var(--s6);
+}
+
+/* Page animation */
+.page-in{
+  animation:pageIn var(--t-slow) var(--ease) both;
+}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ════════════════════════════════════════════════════════════
+   CARDS & SURFACES
+   ════════════════════════════════════════════════════════════ */
+.card{
+  background:var(--bg-surface);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--r-lg);
+  padding:var(--s6);
+  transition:border-color var(--t-fast);
+}
+.card:hover{border-color:var(--border-default)}
+.card-sm{padding:var(--s4) var(--s5)}
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:var(--s5);gap:var(--s4);
+}
+.card-title{
+  font-family:var(--font-display);
+  font-size:16px;font-weight:600;
+  color:var(--text-primary);
+}
+.card-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* Stat cards */
+.stat-card{
+  background:var(--bg-surface);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--r-lg);
+  padding:var(--s5) var(--s6);
+  position:relative;overflow:hidden;
+  transition:all var(--t-mid) var(--ease);
+}
+.stat-card:hover{
+  border-color:var(--border-default);
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-md);
+}
+.stat-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent) 0%,transparent 100%);
+  opacity:0;transition:opacity var(--t-mid);
+}
+.stat-card:hover::before{opacity:1}
+.stat-label{font-size:11.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:var(--s2)}
+.stat-value{font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--text-primary);line-height:1}
+.stat-change{font-size:11.5px;margin-top:var(--s2);display:flex;align-items:center;gap:4px}
+.stat-change.up{color:var(--score-high)}
+.stat-change.down{color:var(--score-low)}
+.stat-icon{
+  position:absolute;right:var(--s5);top:var(--s5);
+  font-size:28px;opacity:.12;
+}
+
+/* ════════════════════════════════════════════════════════════
+   GRID UTILITIES
+   ════════════════════════════════════════════════════════════ */
+.grid-auto{display:grid;gap:var(--s4)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g2-3{grid-template-columns:2fr 3fr}
+.g3-2{grid-template-columns:3fr 2fr}
+.flex{display:flex}.flex-col{flex-direction:column}
+.items-center{align-items:center}.items-start{align-items:flex-start}
+.justify-between{justify-content:space-between}
+.gap-1{gap:var(--s1)}.gap-2{gap:var(--s2)}.gap-3{gap:var(--s3)}
+.gap-4{gap:var(--s4)}.gap-6{gap:var(--s6)}
+.flex-1{flex:1}.min-w-0{min-width:0}
+.truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mb-4{margin-bottom:var(--s4)}.mb-6{margin-bottom:var(--s6)}
+.mt-4{margin-top:var(--s4)}.mt-2{margin-top:var(--s2)}
+.w-full{width:100%}
+.text-right{text-align:right}.text-center{text-align:center}
+
+/* Page header */
+.page-header{margin-bottom:var(--s6)}
+.page-title{
+  font-family:var(--font-display);
+  font-size:28px;font-weight:700;letter-spacing:-.2px;
+  color:var(--text-primary);letter-spacing:-.4px;
+}
+.page-sub{font-size:13px;color:var(--text-muted);margin-top:3px}
+.page-actions{display:flex;gap:var(--s2);margin-top:var(--s4);flex-wrap:wrap}
+
+/* ════════════════════════════════════════════════════════════
+   BUTTONS
+   ════════════════════════════════════════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;gap:var(--s2);
+  padding:8px 16px;border-radius:var(--r-md);
+  font-size:13.5px;font-weight:600;
+  cursor:pointer;border:none;
+  transition:all var(--t-fast) var(--ease);
+  white-space:nowrap;user-select:none;
+  font-family:var(--font-body);
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{
+  background:var(--accent);color:#fff;
+}
+.btn-primary:hover{background:var(--accent-hover);box-shadow:0 4px 16px var(--accent-dim)}
+.btn-secondary{
+  background:var(--bg-elevated);
+  border:1px solid var(--border-default);
+  color:var(--text-primary);
+}
+.btn-secondary:hover{background:var(--bg-overlay);border-color:var(--border-strong)}
+.btn-ghost{
+  background:transparent;color:var(--text-secondary);
+  border:1px solid transparent;
+}
+.btn-ghost:hover{background:var(--bg-hover);color:var(--text-primary);border-color:var(--border-subtle)}
+.btn-danger{background:var(--brand-red);color:#fff}
+.btn-danger:hover{background:#e03030}
+.btn-gold{background:var(--brand-gold);color:#000;font-weight:700}
+.btn-gold:hover{background:#ffb030}
+.btn-sm{padding:5px 11px;font-size:12.5px}
+.btn-xs{padding:3px 8px;font-size:11.5px}
+.btn-icon{padding:7px;border-radius:var(--r-md)}
+.btn-icon-sm{padding:5px;border-radius:var(--r-sm)}
+.icon-btn{
+  width:32px;height:32px;border-radius:var(--r-md);
+  border:1px solid var(--border-subtle);
+  background:var(--bg-elevated);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-muted);
+  font-size:14px;transition:all var(--t-fast);flex-shrink:0;
+}
+.icon-btn:hover{background:var(--bg-overlay);border-color:var(--border-default);color:var(--text-primary)}
+
+/* ════════════════════════════════════════════════════════════
+   BADGES & TAGS
+   ════════════════════════════════════════════════════════════ */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:var(--r-full);
+  font-size:11px;font-weight:700;
+  letter-spacing:.3px;white-space:nowrap;
+}
+.badge-green {background:var(--brand-green-dim);color:var(--score-high)}
+.badge-red   {background:var(--brand-red-dim);color:var(--score-low)}
+.badge-gold  {background:var(--brand-gold-dim);color:var(--gold)}
+.badge-amber {background:var(--amber-dim);color:var(--amber)}
+.badge-blue  {background:var(--blue-dim);color:var(--blue)}
+.badge-violet{background:var(--violet-dim);color:var(--violet)}
+.badge-muted {background:var(--bg-elevated);color:var(--text-muted);border:1px solid var(--border-subtle)}
+
+/* Priority tiers */
+.tier-P1{background:var(--brand-red-dim);color:var(--score-low);border:1px solid var(--brand-red-dim)}
+.tier-P2{background:var(--brand-green-dim);color:var(--score-high);border:1px solid var(--brand-green-dim)}
+.tier-P3{background:var(--brand-gold-dim);color:var(--gold);border:1px solid var(--brand-gold-dim)}
+.tier-ignore{background:var(--bg-elevated);color:var(--text-muted);border:1px solid var(--border-subtle)}
+
+/* ════════════════════════════════════════════════════════════
+   FORMS
+   ════════════════════════════════════════════════════════════ */
+.form-group{margin-bottom:var(--s4)}
+.form-label{
+  display:block;font-size:12.5px;font-weight:600;
+  color:var(--text-secondary);margin-bottom:var(--s2);
+  letter-spacing:.2px;
+}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:9px 13px;
+  background:var(--bg-elevated);
+  border:1px solid var(--border-default);
+  border-radius:var(--r-md);
+  color:var(--text-primary);font-size:13.5px;
+  transition:all var(--t-fast);outline:none;
+  font-family:var(--font-body);
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-dim);
+}
+.form-input::placeholder{color:var(--text-muted)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-select option{background:var(--bg-elevated)}
+.form-hint{font-size:11.5px;color:var(--text-muted);margin-top:var(--s1)}
+.form-row{display:grid;gap:var(--s4);grid-template-columns:1fr 1fr}
+.form-row-3{display:grid;gap:var(--s4);grid-template-columns:1fr 1fr 1fr}
+
+/* Range slider */
+input[type=range]{
+  width:100%;height:4px;border-radius:2px;
+  background:var(--border-default);
+  accent-color:var(--accent);cursor:pointer;
+  outline:none;border:none;padding:0;
+  -webkit-appearance:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  width:16px;height:16px;border-radius:var(--r-full);
+  background:var(--accent);border:2px solid var(--bg-surface);
+  -webkit-appearance:none;cursor:pointer;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TABLES
+   ════════════════════════════════════════════════════════════ */
+.table-wrap{overflow-x:auto;border-radius:var(--r-lg);border:1px solid var(--border-subtle)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead{background:var(--bg-elevated)}
+th{
+  padding:10px 14px;text-align:left;
+  font-size:11.5px;font-weight:700;
+  color:var(--text-muted);letter-spacing:.5px;
+  text-transform:uppercase;
+  border-bottom:1px solid var(--border-subtle);
+  white-space:nowrap;
+}
+th.sort-asc::after{content:' ↑';color:var(--accent)}
+th.sort-desc::after{content:' ↓';color:var(--accent)}
+td{
+  padding:11px 14px;
+  border-bottom:1px solid var(--border-faint);
+  color:var(--text-primary);vertical-align:middle;
+}
+tbody tr{transition:background var(--t-fast)}
+tbody tr:hover{background:var(--bg-hover)}
+tbody tr:last-child td{border-bottom:none}
+td .cell-name{font-weight:600;font-size:14px;color:var(--text-primary)}
+td .cell-sub{font-size:11.5px;color:var(--text-muted);margin-top:1px}
+
+/* ════════════════════════════════════════════════════════════
+   SCORE RING (SVG donut)
+   ════════════════════════════════════════════════════════════ */
+.score-ring-wrap{
+  position:relative;width:54px;height:54px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.score-ring-wrap svg{position:absolute;inset:0}
+.score-ring-text{
+  font-family:var(--font-display);
+  font-size:13px;font-weight:800;
+  line-height:1;position:relative;z-index:1;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PROGRESS BAR
+   ════════════════════════════════════════════════════════════ */
+.progress-track{
+  width:100%;height:5px;
+  background:var(--border-subtle);border-radius:3px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;border-radius:3px;
+  background:var(--accent);
+  transition:width var(--t-slow) var(--ease);
+}
+.progress-gold .progress-fill{background:var(--gold)}
+.progress-red  .progress-fill{background:var(--red)}
+
+/* ════════════════════════════════════════════════════════════
+   OVERLAYS / MODALS
+   ════════════════════════════════════════════════════════════ */
+.overlay{
+  position:fixed;inset:0;z-index:300;
+  display:none;
+}
+.overlay.active{display:flex}
+.overlay-backdrop{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(4px);
+}
+.modal{
+  position:relative;z-index:1;
+  background:var(--bg-elevated);
+  border:1px solid var(--border-default);
+  border-radius:var(--r-xl);
+  box-shadow:var(--shadow-lg);
+  width:100%;max-width:620px;
+  max-height:90vh;overflow-y:auto;
+  margin:auto;
+  animation:modalIn var(--t-slow) var(--ease) both;
+}
+@keyframes modalIn{
+  from{opacity:0;transform:scale(.95) translateY(20px)}
+  to{opacity:1;transform:none}
+}
+.modal-lg{max-width:820px}
+.modal-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:var(--s6);border-bottom:1px solid var(--border-subtle);
+  gap:var(--s4);
+}
+.modal-title{
+  font-family:var(--font-display);
+  font-size:22px;font-weight:700;
+  color:var(--text-primary);
+}
+.modal-close{
+  width:32px;height:32px;border-radius:var(--r-md);
+  border:1px solid var(--border-subtle);
+  background:var(--bg-overlay);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-muted);font-size:16px;
+  flex-shrink:0;transition:all var(--t-fast);
+}
+.modal-close:hover{background:var(--bg-hover);color:var(--text-primary)}
+.modal-body{padding:var(--s6)}
+.modal-footer{
+  padding:var(--s4) var(--s6);
+  border-top:1px solid var(--border-subtle);
+  display:flex;justify-content:flex-end;gap:var(--s3);
+}
+
+/* Notif panel */
+.notif-panel{
+  position:absolute;top:calc(100% + 8px);right:0;
+  width:320px;
+  background:var(--bg-elevated);
+  border:1px solid var(--border-default);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg);
+  z-index:200;display:none;overflow:hidden;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PIPELINE KANBAN
+   ════════════════════════════════════════════════════════════ */
+.pipeline-board{
+  display:flex;gap:var(--s4);
+  overflow-x:auto;padding-bottom:var(--s4);
+  min-height:500px;
+}
+.pipeline-col{
+  flex:0 0 230px;
+  background:var(--bg-surface);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--r-lg);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.pipeline-col-header{
+  padding:var(--s3) var(--s4);
+  border-bottom:1px solid var(--border-faint);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--bg-elevated);
+  flex-shrink:0;
+}
+.pipeline-col-title{font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.6px}
+.pipeline-col-count{
+  font-size:11px;font-weight:700;
+  background:var(--bg-overlay);color:var(--text-muted);
+  padding:1px 7px;border-radius:var(--r-full);
+}
+.pipeline-col-body{
+  flex:1;overflow-y:auto;padding:var(--s3);
+  display:flex;flex-direction:column;gap:var(--s3);
+}
+.pipeline-col.drag-over{
+  background:var(--accent-dim);
+  border-color:var(--accent);
+}
+.pipeline-card{
+  background:var(--bg-elevated);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--r-md);
+  padding:var(--s3) var(--s4);
+  cursor:grab;
+  transition:all var(--t-fast);
+}
+.pipeline-card:hover{
+  border-color:var(--border-default);
+  transform:translateY(-1px);
+  box-shadow:var(--shadow-sm);
+}
+.pipeline-card.dragging{opacity:.5;cursor:grabbing}
+.pipeline-card-name{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px;line-height:1.3}
+.pipeline-card-meta{font-size:11px;color:var(--text-muted)}
+.pipeline-card-value{
+  font-family:var(--font-mono);
+  font-size:12px;font-weight:500;
+  color:var(--accent);margin-top:4px;
+}
+.pipeline-col-accent{height:3px;flex-shrink:0}
+
+/* ════════════════════════════════════════════════════════════
+   TABS
+   ════════════════════════════════════════════════════════════ */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border-subtle);margin-bottom:var(--s6)}
+.tab-btn{
+  padding:9px 16px;font-size:13px;font-weight:500;
+  color:var(--text-muted);cursor:pointer;
+  border:none;background:none;border-bottom:2px solid transparent;
+  margin-bottom:-1px;transition:all var(--t-fast);
+  font-family:var(--font-body);
+}
+.tab-btn:hover{color:var(--text-primary)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+
+/* ════════════════════════════════════════════════════════════
+   FILTER BAR
+   ════════════════════════════════════════════════════════════ */
+.filter-bar{
+  display:flex;align-items:center;gap:var(--s3);
+  flex-wrap:wrap;margin-bottom:var(--s4);
+}
+.filter-chip{
+  padding:5px 13px;border-radius:var(--r-full);
+  font-size:12.5px;font-weight:500;
+  cursor:pointer;border:1px solid var(--border-subtle);
+  background:var(--bg-elevated);color:var(--text-secondary);
+  transition:all var(--t-fast);font-family:var(--font-body);
+}
+.filter-chip:hover{border-color:var(--border-default);color:var(--text-primary)}
+.filter-chip.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);font-weight:700}
+
+/* ════════════════════════════════════════════════════════════
+   CALENDAR
+   ════════════════════════════════════════════════════════════ */
+.calendar-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:2px;
+}
+.cal-day-hdr{
+  font-size:11px;font-weight:700;color:var(--text-muted);
+  text-align:center;padding:var(--s2);letter-spacing:.5px;text-transform:uppercase;
+}
+.cal-day{
+  min-height:80px;border-radius:var(--r-sm);
+  border:1px solid var(--border-faint);
+  padding:var(--s2);
+  background:var(--bg-surface);
+  transition:border-color var(--t-fast);
+}
+.cal-day:hover{border-color:var(--border-default)}
+.cal-day.today{border-color:var(--accent);background:var(--accent-dim)}
+.cal-day.other-month{opacity:.4}
+.cal-day-num{
+  font-size:12px;font-weight:700;
+  color:var(--text-secondary);margin-bottom:4px;
+}
+.cal-event{
+  font-size:10.5px;padding:2px 5px;
+  border-radius:3px;margin-bottom:2px;
+  font-weight:600;cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cal-event-red{background:var(--brand-red-dim);color:var(--score-low)}
+.cal-event-green{background:var(--brand-green-dim);color:var(--score-high)}
+.cal-event-gold{background:var(--brand-gold-dim);color:var(--gold)}
+
+/* ════════════════════════════════════════════════════════════
+   RELATIONSHIP CARDS
+   ════════════════════════════════════════════════════════════ */
+.rel-card{
+  background:var(--bg-surface);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--r-lg);
+  padding:var(--s5);
+  transition:all var(--t-mid) var(--ease);
+}
+.rel-card:hover{border-color:var(--border-default);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.rel-avatar{
+  width:44px;height:44px;border-radius:var(--r-full);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:16px;font-weight:800;
+  flex-shrink:0;color:#fff;
+}
+.rel-level-bar{height:3px;border-radius:2px;margin-top:var(--s3);overflow:hidden;background:var(--border-subtle)}
+.rel-level-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .4s var(--ease)}
+
+/* ════════════════════════════════════════════════════════════
+   CHART BARS (CSS-only)
+   ════════════════════════════════════════════════════════════ */
+.chart-bar-group{display:flex;flex-direction:column;gap:var(--s3)}
+.chart-bar-item{display:flex;align-items:center;gap:var(--s3)}
+.chart-bar-label{font-size:12px;color:var(--text-secondary);width:100px;flex-shrink:0;text-align:right}
+.chart-bar-track{flex:1;height:8px;background:var(--bg-elevated);border-radius:4px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:4px;transition:width .6s var(--ease)}
+.chart-bar-val{font-size:12px;font-weight:500;color:var(--text-primary);width:60px;text-align:right;flex-shrink:0;font-family:var(--font-mono)}
+
+/* Donut / ring chart (canvas-free CSS) */
+.donut-wrap{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;text-align:center;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DOCUMENT LIBRARY
+   ════════════════════════════════════════════════════════════ */
+.doc-card{
+  background:var(--bg-surface);border:1px solid var(--border-subtle);
+  border-radius:var(--r-lg);padding:var(--s4) var(--s5);
+  display:flex;align-items:center;gap:var(--s4);
+  transition:all var(--t-fast);cursor:pointer;
+}
+.doc-card:hover{border-color:var(--border-default);background:var(--bg-elevated)}
+.doc-icon{
+  width:40px;height:40px;border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+
+/* ════════════════════════════════════════════════════════════
+   FORECAST
+   ════════════════════════════════════════════════════════════ */
+.forecast-row{
+  display:grid;grid-template-columns:1fr auto auto auto;
+  align-items:center;gap:var(--s4);
+  padding:var(--s3) var(--s4);
+  border-bottom:1px solid var(--border-faint);
+  font-size:13px;
+}
+.forecast-row:last-child{border-bottom:none}
+.forecast-row:hover{background:var(--bg-hover)}
+
+/* ════════════════════════════════════════════════════════════
+   AI BUILDER
+   ════════════════════════════════════════════════════════════ */
+.ai-task-btn{
+  display:flex;flex-direction:column;gap:4px;
+  padding:var(--s4) var(--s5);
+  border:1px solid var(--border-default);
+  border-radius:var(--r-md);
+  cursor:pointer;background:var(--bg-elevated);
+  text-align:left;transition:all var(--t-fast);
+  font-family:var(--font-body);
+}
+.ai-task-btn:hover{border-color:var(--accent);background:var(--accent-dim)}
+.ai-task-btn.selected{border-color:var(--accent);border-width:2px;background:var(--accent-dim)}
+.ai-task-title{font-size:13.5px;font-weight:700;color:var(--text-primary)}
+.ai-task-desc{font-size:11.5px;color:var(--text-muted)}
+.ai-output{
+  background:var(--bg-base);border:1px solid var(--border-default);
+  border-radius:var(--r-md);padding:var(--s5);
+  font-size:13px;line-height:1.8;white-space:pre-wrap;
+  max-height:480px;overflow-y:auto;color:var(--text-primary);
+  font-family:var(--font-body);
+}
+
+/* ════════════════════════════════════════════════════════════
+   SOURCING (live search)
+   ════════════════════════════════════════════════════════════ */
+.source-card{
+  background:var(--bg-surface);border:1px solid var(--border-subtle);
+  border-radius:var(--r-lg);padding:var(--s5) var(--s6);
+  margin-bottom:var(--s4);transition:all var(--t-mid) var(--ease);
+}
+.source-card:hover{border-color:var(--border-default);box-shadow:var(--shadow-sm)}
+.source-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s4);margin-bottom:var(--s3)}
+.source-card-name{font-size:15px;font-weight:700;color:var(--text-primary);line-height:1.3}
+.source-card-funder{font-size:12px;color:var(--text-muted);margin-top:2px}
+.source-card-amount{
+  font-family:var(--font-display);font-size:14px;font-weight:700;
+  color:var(--accent);white-space:nowrap;flex-shrink:0;
+}
+.source-card-amount.mega{color:var(--gold)}
+
+/* ════════════════════════════════════════════════════════════
+   EMPTY STATES
+   ════════════════════════════════════════════════════════════ */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;
+  padding:var(--s16) var(--s8);text-align:center;
+  color:var(--text-muted);
+}
+.empty-icon{font-size:48px;margin-bottom:var(--s4);opacity:.4}
+.empty-title{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text-secondary);margin-bottom:var(--s2)}
+.empty-text{font-size:13px;max-width:300px}
+
+/* ════════════════════════════════════════════════════════════
+   TOAST
+   ════════════════════════════════════════════════════════════ */
+.toast-container{
+  position:fixed;bottom:24px;right:24px;z-index:1000;
+  display:flex;flex-direction:column;gap:var(--s3);
+}
+.toast{
+  background:var(--bg-elevated);
+  border:1px solid var(--border-default);
+  border-radius:var(--r-md);
+  padding:12px 16px;min-width:260px;
+  box-shadow:var(--shadow-md);
+  display:flex;align-items:center;gap:var(--s3);
+  animation:toastIn .3s var(--ease) both;
+  font-size:13.5px;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.toast.success{border-left:3px solid var(--accent)}
+.toast.error  {border-left:3px solid var(--brand-red)}
+.toast.info   {border-left:3px solid var(--blue)}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  #shell{grid-template-columns:1fr}
+  #sidebar{
+    position:fixed;left:0;top:0;bottom:0;
+    transform:translateX(-100%);
+    transition:transform var(--t-slow) var(--ease);
+    z-index:200;width:var(--sidebar-w);
+  }
+  #shell.mobile-open #sidebar{transform:translateX(0)}
+  .menu-btn{display:flex!important}
+  .search-input{width:180px}
+  .search-input:focus{width:220px}
+  .search-kbd{display:none}
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(2,1fr)}
+  .g2-3,.g3-2{grid-template-columns:1fr}
+  #page-content{padding:var(--s4)}
+}
+@media(max-width:600px){
+  .g2{grid-template-columns:1fr}
+  .g4{grid-template-columns:1fr 1fr}
+  .form-row,.form-row-3{grid-template-columns:1fr}
+  .pipeline-board{min-height:400px}
+  .search-wrap{display:none}
+  .modal{max-width:100%;border-radius:var(--r-lg) var(--r-lg) 0 0;max-height:95vh;position:fixed;bottom:0;left:0;right:0;margin:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     APP SHELL
+     ════════════════════════════════════════════ -->
+<div id="shell">
+
+  <!-- ── SIDEBAR ── -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark"><div class="logo-play"></div></div>
+      <div class="logo-wordmark">
+        <div class="logo-name">Mbogi<span>wood</span></div>
+        <div class="logo-sub">Opportunity Intel</div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="sidebar-section-label">Command</div>
+      <div class="nav-item active" data-tab="dashboard" onclick="App.navigate('dashboard')">
+        <span class="nav-icon">◈</span>
+        <span class="nav-label">Command Center</span>
+      </div>
+      <div class="nav-item" data-tab="sourcing" onclick="App.navigate('sourcing')">
+        <span class="nav-icon">⊕</span>
+        <span class="nav-label">Live Sourcing</span>
+        <span class="nav-badge green" id="badge-sourcing" style="display:none">AI</span>
+      </div>
+
+      <div class="sidebar-section-label">Discovery</div>
+      <div class="nav-item" data-tab="radar" onclick="App.navigate('radar')">
+        <span class="nav-icon">◎</span>
+        <span class="nav-label">Opportunity Radar</span>
+      </div>
+      <div class="nav-item" data-tab="qualify" onclick="App.navigate('qualify')">
+        <span class="nav-icon">◆</span>
+        <span class="nav-label">Qualify &amp; Score</span>
+      </div>
+
+      <div class="sidebar-section-label">Pipeline</div>
+      <div class="nav-item" data-tab="pipeline" onclick="App.navigate('pipeline')">
+        <span class="nav-icon">⊞</span>
+        <span class="nav-label">Capital Pipeline</span>
+        <span class="nav-badge" id="badge-pipeline">0</span>
+      </div>
+      <div class="nav-item" data-tab="forecast" onclick="App.navigate('forecast')">
+        <span class="nav-icon">◐</span>
+        <span class="nav-label">Funding Forecast</span>
+      </div>
+      <div class="nav-item" data-tab="calendar" onclick="App.navigate('calendar')">
+        <span class="nav-icon">▦</span>
+        <span class="nav-label">Deadline Calendar</span>
+        <span class="nav-badge" id="badge-calendar" style="display:none">0</span>
+      </div>
+
+      <div class="sidebar-section-label">Intelligence</div>
+      <div class="nav-item" data-tab="relationships" onclick="App.navigate('relationships')">
+        <span class="nav-icon">◉</span>
+        <span class="nav-label">Relationships</span>
+      </div>
+      <div class="nav-item" data-tab="docs" onclick="App.navigate('docs')">
+        <span class="nav-icon">▣</span>
+        <span class="nav-label">Document Library</span>
+      </div>
+      <div class="nav-item" data-tab="analytics" onclick="App.navigate('analytics')">
+        <span class="nav-icon">◬</span>
+        <span class="nav-label">Analytics</span>
+      </div>
+      <div class="nav-item" data-tab="aibuilder" onclick="App.navigate('aibuilder')">
+        <span class="nav-icon">◈</span>
+        <span class="nav-label">AI Builder</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-footer-btn" onclick="App.navigate('settings')">
+        <span style="font-size:15px">⚙</span>
+        <span class="sidebar-footer-text">Settings</span>
+      </button>
+      <button class="sidebar-footer-btn" onclick="toggleTheme()">
+        <span id="theme-icon" style="font-size:15px">☀</span>
+        <span class="sidebar-footer-text" id="theme-label">Light Mode</span>
+      </button>
+    </div>
+
+    <!-- collapse btn -->
+    <div class="collapse-btn" onclick="collapseToggle()" id="collapse-btn" title="Collapse sidebar">◀</div>
+  </nav>
+
+  <!-- ── MAIN ── -->
+  <div id="main">
+
+    <!-- Topbar -->
+    <header id="topbar">
+      <button class="menu-btn" onclick="mobileMenuToggle()">☰</button>
+
+      <div class="topbar-title">
+        <div class="topbar-page-name" id="page-title">Command Center</div>
+        <div class="topbar-page-sub" id="page-sub">Your opportunity intelligence overview</div>
+      </div>
+
+      <!-- Global search -->
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="global-search"
+               placeholder="Search opportunities… ⌘K"
+               onfocus="this.select()"
+               autocomplete="off">
+        <span class="search-kbd">⌘K</span>
+        <div class="search-dropdown" id="search-dropdown"></div>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Notifications -->
+        <div style="position:relative">
+          <button class="topbar-btn" id="notif-btn" onclick="toggleNotifications()" title="Notifications">
+            🔔
+            <span class="notif-badge" id="notif-count" style="display:none">0</span>
+          </button>
+          <div class="notif-panel" id="notif-panel"></div>
+        </div>
+
+        <!-- New Opportunity -->
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">
+          + New Opportunity
+        </button>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <div id="page-content"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     ADD / EDIT OPPORTUNITY MODAL
+     ════════════════════════════════════════════ -->
+<div class="overlay" id="add-modal">
+  <div class="overlay-backdrop" onclick="closeModal('add-modal')"></div>
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">Add Opportunity</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Complete all fields for accurate scoring</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('add-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- Detail overlay -->
+<div class="overlay" id="detail-overlay">
+  <div class="overlay-backdrop" onclick="closeModal('detail-overlay')"></div>
+  <div class="modal modal-lg" id="detail-modal-content"></div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT — MBOGIWOOD PLATFORM ENGINE
+     ════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════
+   DATA MODELS
+   ═══════════════════════════════════════════════════════════ */
+const OPPORTUNITY_TYPES = ['Grant','Film Fund','Fellowship','Partnership','Investment','Executive Role','Award','Commission','License Deal'];
+const STAGES = ['discovered','qualified','preparing','submitted','reviewing','awarded','rejected'];
+const STAGE_LABELS = {discovered:'Discovered',qualified:'Qualified',preparing:'Preparing',submitted:'Submitted',reviewing:'Under Review',awarded:'Awarded',rejected:'Rejected'};
+const STAGE_COLORS = {discovered:'#4090d8',qualified:'#8868d8',preparing:'#f0a020',submitted:'#e87828',reviewing:'#2db84b',awarded:'#2db84b',rejected:'#cc2828'};
+const REL_LEVELS = ['None','Aware','Weak','Active Contact','Strong','Champion'];
+const TIER_LABELS = {P1:'Priority',P2:'Strong',P3:'Conditional',ignore:'Ignore'};
+
+/* ═══════════════════════════════════════════════════════════
+   SEED DATA (replace with API calls in production)
+   ═══════════════════════════════════════════════════════════ */
+const SEED_OPPS = [
+  {id:'o1',name:'Africa Movie Academy Award Grant',type:'Film Fund',source:'AMAA',value:15000000,currency:'KES',deadline:'2026-06-30',stage:'preparing',probability:55,eligibility:'Open',competition:'Medium',effort:3,alignment:8,relationship:3,geo:'Africa',tags:['film','award','pan-african'],notes:'Strong track record match. Contact program officer first.',created:'2026-01-10'},
+  {id:'o2',name:'Sundance Documentary Fund',type:'Film Fund',source:'Sundance Institute',value:12000000,currency:'KES',deadline:'2026-08-15',stage:'qualified',probability:35,eligibility:'Open',competition:'High',effort:4,alignment:7,relationship:1,geo:'Global',tags:['documentary','international'],notes:'Highly competitive. Need strong pitch doc.',created:'2026-01-15'},
+  {id:'o3',name:'Africa Enterprise Challenge Fund',type:'Grant',source:'AECF',value:150000000,currency:'KES',deadline:'2026-07-31',stage:'discovered',probability:25,eligibility:'Open',competition:'High',effort:5,alignment:6,relationship:0,geo:'Africa',tags:['enterprise','development'],notes:'Large grant. Co-financing required.',created:'2026-01-20'},
+  {id:'o4',name:'Tony Elumelu Foundation Program',type:'Grant',source:'TEF',value:650000,currency:'KES',deadline:'2026-04-30',stage:'preparing',probability:70,eligibility:'Open',competition:'Medium',effort:2,alignment:9,relationship:4,geo:'Africa',tags:['entrepreneur','youth'],notes:'Good fit. Complete application this week.',created:'2026-01-05'},
+  {id:'o5',name:'Mastercard Foundation Young Africa Works',type:'Grant',source:'Mastercard Foundation',value:65000000,currency:'KES',deadline:'Rolling',stage:'qualified',probability:40,eligibility:'Open',competition:'Medium',effort:4,alignment:8,relationship:2,geo:'Africa',tags:['youth','employment'],notes:'Rolling deadline. Strong alignment.',created:'2026-01-22'},
+  {id:'o6',name:'GSMA Mobile for Development Fund',type:'Grant',source:'GSMA',value:20000000,currency:'KES',deadline:'2026-06-15',stage:'discovered',probability:30,eligibility:'Open',competition:'High',effort:4,alignment:5,relationship:1,geo:'Global',tags:['mobile','tech','innovation'],notes:'Requires mobile solution.',created:'2026-02-01'},
+  {id:'o7',name:'Berlinale Co-Production Fund',type:'Film Fund',source:'Berlinale / Filmförderung',value:25000000,currency:'KES',deadline:'2026-09-01',stage:'discovered',probability:20,eligibility:'Open',competition:'High',effort:5,alignment:7,relationship:0,geo:'Global',tags:['co-production','international','film'],notes:'European co-production partner required.',created:'2026-02-05'},
+  {id:'o8',name:'Hubert Bals Fund — Script Development',type:'Fellowship',source:'IFFR',value:8000000,currency:'KES',deadline:'2026-05-15',stage:'preparing',probability:60,eligibility:'Open',competition:'Medium',effort:3,alignment:9,relationship:3,geo:'Global',tags:['script','development','film'],notes:'Strong eligibility match. Two previous IFFR relationships.',created:'2026-01-30'},
+];
+
+const SEED_RELS = [
+  {id:'r1',name:'Amina Osei',org:'Tony Elumelu Foundation',role:'Program Officer',level:4,email:'amina@tef.org',lastContact:'2026-02-10',oppIds:['o4'],notes:'Met at Nairobi summit. Very supportive.'},
+  {id:'r2',name:'David Muriuki',org:'AECF',role:'Investment Manager',level:2,email:'d.muriuki@aecf.org',lastContact:'2026-01-05',oppIds:['o3'],notes:'Initial email exchange. Warm intro from colleague.'},
+  {id:'r3',name:'Sarah Wangari',org:'AMAA',role:'Head of Grants',level:3,email:'swangari@amaa.org',lastContact:'2026-02-20',oppIds:['o1'],notes:'Strong relationship. Met twice at film festivals.'},
+  {id:'r4',name:'James Kimani',org:'Mastercard Foundation',role:'Program Director',level:2,email:'jkimani@mfoundation.org',lastContact:'2025-12-15',oppIds:['o5'],notes:'LinkedIn connection. Needs follow-up.'},
+  {id:'r5',name:'Lena Fischer',org:'IFFR / Hubert Bals',role:'Selection Committee',level:3,email:'lfischer@iffr.com',lastContact:'2026-01-28',oppIds:['o8'],notes:'Met at Rotterdam. Expressed interest in our project.'},
+];
+
+const SEED_DOCS = [
+  {id:'d1',name:'Company Profile 2026',type:'profile',tags:['company','about'],size:'1.2 MB',updated:'2026-02-01',icon:'🏢'},
+  {id:'d2',name:'Director CV — Executive',type:'cv',tags:['cv','director'],size:'380 KB',updated:'2026-01-20',icon:'👤'},
+  {id:'d3',name:'Film Portfolio 2025',type:'portfolio',tags:['films','portfolio'],size:'4.8 MB',updated:'2026-01-15',icon:'🎬'},
+  {id:'d4',name:'Budget Template — Grant',type:'budget',tags:['budget','finance'],size:'95 KB',updated:'2026-02-10',icon:'💰'},
+  {id:'d5',name:'Project Proposal — Narrative',type:'proposal',tags:['proposal','narrative'],size:'560 KB',updated:'2026-02-15',icon:'📄'},
+  {id:'d6',name:'Pitch Deck — Investors',type:'pitch',tags:['pitch','investment'],size:'2.1 MB',updated:'2026-01-28',icon:'📊'},
+  {id:'d7',name:'Recommendation — TEF Partner',type:'reference',tags:['recommendation','letter'],size:'120 KB',updated:'2026-01-12',icon:'✉️'},
+  {id:'d8',name:'Impact Report 2025',type:'report',tags:['impact','annual'],size:'2.4 MB',updated:'2026-01-30',icon:'📈'},
+];
+
+/* ═══════════════════════════════════════════════════════════
+   STATE MANAGEMENT
+   ═══════════════════════════════════════════════════════════ */
+const State = {
+  _storageKey: 'mbogiwood-v2',
+
+  _defaults() {
+    return {
+      opportunities: SEED_OPPS,
+      relationships: SEED_RELS,
+      documents: SEED_DOCS,
+      apiKey: '',
+      aiProfile: { name:'Mbogiwood Productions', founder:'', sector:'Film & Media', location:'Nairobi, Kenya', desc:'', impact:'' },
+      filter: { type:'all', stage:'all', tier:'all', geo:'all', search:'' },
+      sortField: 'score',
+      sortDir: 'desc',
+    };
+  },
+
+  load() {
+    try {
+      const raw = localStorage.getItem(this._storageKey);
+      if (raw) {
+        const d = JSON.parse(raw);
+        return { ...this._defaults(), ...d };
+      }
+    } catch(e) {}
+    return this._defaults();
+  },
+
+  save(data) {
+    try { localStorage.setItem(this._storageKey, JSON.stringify(data)); } catch(e) {}
+  },
+};
+
+/* ═══════════════════════════════════════════════════════════
+   APP — Central State Controller
+   ═══════════════════════════════════════════════════════════ */
+const App = {
+  data: State.load(),
+  currentTab: 'dashboard',
+  dragItem: null,
+  _editId: null,
+  _detailId: null,
+  _aiTask: 'full',
+
+  /* Persist whenever data mutates */
+  persist() { State.save(this.data); },
+
+  /* Score an opportunity (0–100) */
+  score(o) {
+    const val = o.value || 0;
+    const valScore = val >= 100000000 ? 25 : val >= 50000000 ? 20 : val >= 10000000 ? 15 : val >= 1000000 ? 10 : 5;
+    const alignScore = ((o.alignment || 5) / 10) * 20;
+    const eligScore = o.eligibility === 'Open' ? 15 : o.eligibility === 'Restricted' ? 8 : 5;
+    const compScore = o.competition === 'Low' ? 20 : o.competition === 'Medium' ? 12 : 6;
+    const relScore = ((o.relationship || 0) / 5) * 15;
+    const effortScore = o.effort ? (1 - (o.effort - 1) / 4) * 5 : 5;
+    const total = Math.min(100, Math.round(valScore + alignScore + eligScore + compScore + relScore + effortScore));
+    const tier = total >= 75 ? 'P1' : total >= 55 ? 'P2' : total >= 35 ? 'P3' : 'ignore';
+    return { score: total, tier };
+  },
+
+  /* Format currency */
+  fmtVal(v, cur) {
+    cur = cur || 'KES';
+    if (!v) return '—';
+    if (v >= 1e9) return cur + ' ' + (v/1e9).toFixed(1) + 'B';
+    if (v >= 1e6) return cur + ' ' + (v/1e6).toFixed(1) + 'M';
+    if (v >= 1e3) return cur + ' ' + (v/1e3).toFixed(0) + 'K';
+    return cur + ' ' + v.toLocaleString();
+  },
+
+  /* Days until deadline */
+  daysUntil(d) {
+    if (!d || d === 'Rolling') return 999;
+    return Math.ceil((new Date(d) - Date.now()) / 86400000);
+  },
+
+  /* Deadline label */
+  dlabel(o) {
+    if (!o.deadline || o.deadline === 'Rolling') return `<span class="badge badge-blue">Rolling</span>`;
+    const d = this.daysUntil(o.deadline);
+    if (d < 0) return `<span class="badge badge-muted">Closed</span>`;
+    if (d <= 14) return `<span class="badge badge-red">⚡ ${d}d</span>`;
+    if (d <= 45) return `<span class="badge badge-gold">◉ ${d}d</span>`;
+    return `<span class="badge badge-muted">${o.deadline}</span>`;
+  },
+
+  esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  },
+
+  navigate(tab) {
+    this.currentTab = tab;
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.tab === tab);
+    });
+    Render.run();
+    // Close mobile sidebar
+    document.getElementById('shell').classList.remove('mobile-open');
+  },
+
+  getOpp(id) { return this.data.opportunities.find(o => o.id === id); },
+  getRel(id) { return this.data.relationships.find(r => r.id === id); },
+
+  addOpp(opp) {
+    opp.id = 'opp-' + Date.now();
+    opp.created = new Date().toISOString().slice(0,10);
+    if (!opp.tags) opp.tags = [];
+    this.data.opportunities.unshift(opp);
+    this.persist();
+  },
+
+  updateOpp(id, patch) {
+    const idx = this.data.opportunities.findIndex(o => o.id === id);
+    if (idx > -1) { Object.assign(this.data.opportunities[idx], patch); this.persist(); }
+  },
+
+  deleteOpp(id) {
+    this.data.opportunities = this.data.opportunities.filter(o => o.id !== id);
+    this.persist();
+  },
+
+  moveStage(id, stage) {
+    this.updateOpp(id, { stage });
+    toast(`Moved to ${STAGE_LABELS[stage]}`, 'success');
+    Render.run();
+  },
+
+  filteredOpps() {
+    const f = this.data.filter;
+    let list = this.data.opportunities.filter(o => {
+      if (f.type && f.type !== 'all' && o.type !== f.type) return false;
+      if (f.stage && f.stage !== 'all' && o.stage !== f.stage) return false;
+      if (f.geo && f.geo !== 'all' && o.geo !== f.geo) return false;
+      if (f.tier && f.tier !== 'all') {
+        const { tier } = this.score(o);
+        if (tier !== f.tier) return false;
+      }
+      if (f.search) {
+        const q = f.search.toLowerCase();
+        if (!(o.name||'').toLowerCase().includes(q) &&
+            !(o.source||'').toLowerCase().includes(q) &&
+            !(o.type||'').toLowerCase().includes(q) &&
+            !(o.tags||[]).some(t => t.toLowerCase().includes(q))) return false;
+      }
+      return true;
+    });
+    // Sort
+    const sf = this.data.sortField;
+    list.sort((a, b) => {
+      let va, vb;
+      if (sf === 'score')    { va = this.score(a).score; vb = this.score(b).score; }
+      else if (sf === 'value')   { va = a.value||0; vb = b.value||0; }
+      else if (sf === 'deadline'){ va = a.deadline||'zz'; vb = b.deadline||'zz'; }
+      else if (sf === 'name')    { va = a.name||''; vb = b.name||''; }
+      else { va = 0; vb = 0; }
+      const r = typeof va === 'string' ? va.localeCompare(vb) : (va - vb);
+      return this.data.sortDir === 'asc' ? r : -r;
+    });
+    return list;
+  },
+
+  /* Metrics */
+  metrics() {
+    const opps = this.data.opportunities;
+    const live = opps.filter(o => !['awarded','rejected'].includes(o.stage));
+    const pipeVal = live.reduce((s,o) => s + (o.value||0), 0);
+    const expectedVal = live.reduce((s,o) => s + (o.value||0) * ((o.probability||20)/100), 0);
+    const awarded = opps.filter(o => o.stage === 'awarded');
+    const secured = awarded.reduce((s,o) => s + (o.value||0), 0);
+    const total = opps.length;
+    const successRate = total > 0 ? Math.round((awarded.length / Math.max(awarded.length + opps.filter(o=>o.stage==='rejected').length, 1)) * 100) : 0;
+    return { total, live: live.length, pipeVal, expectedVal, secured, successRate, awarded: awarded.length };
+  },
+};
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER ENGINE
+   ═══════════════════════════════════════════════════════════ */
+const Render = {
+  pages: {
+    dashboard:     () => Pages.dashboard(),
+    radar:         () => Pages.radar(),
+    qualify:       () => Pages.qualify(),
+    pipeline:      () => Pages.pipeline(),
+    forecast:      () => Pages.forecast(),
+    calendar:      () => Pages.calendar(),
+    relationships: () => Pages.relationships(),
+    docs:          () => Pages.docs(),
+    analytics:     () => Pages.analytics(),
+    aibuilder:     () => Pages.aibuilder(),
+    sourcing:      () => Pages.sourcing(),
+    settings:      () => Pages.settings(),
+  },
+
+  run() {
+    const container = document.getElementById('page-content');
+    const page = this.pages[App.currentTab];
+    if (!page) return;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'page-in';
+    wrapper.innerHTML = page();
+    container.innerHTML = '';
+    container.appendChild(wrapper);
+    this.bindEvents(wrapper);
+    this.updateBadges();
+    this.updateTopbar();
+  },
+
+  updateBadges() {
+    const opps = App.data.opportunities;
+    const urgentCount = opps.filter(o => {
+      const d = App.daysUntil(o.deadline);
+      return d > 0 && d <= 30 && !['awarded','rejected'].includes(o.stage);
+    }).length;
+    const pipeCount = opps.filter(o => !['awarded','rejected','discovered'].includes(o.stage)).length;
+
+    const bc = document.getElementById('badge-calendar');
+    const bp = document.getElementById('badge-pipeline');
+    if (bc) { bc.textContent = urgentCount; bc.style.display = urgentCount ? '' : 'none'; }
+    if (bp) { bp.textContent = pipeCount; }
+    updateNotifBadge();
+  },
+
+  updateTopbar() {
+    const map = {
+      dashboard: ['Command Center','Your opportunity intelligence overview'],
+      radar:     ['Opportunity Radar','Discover and manage all opportunities'],
+      qualify:   ['Qualify & Score','Automated scoring and prioritisation'],
+      pipeline:  ['Capital Pipeline','Visual deal-flow tracking'],
+      forecast:  ['Funding Forecast','Expected value and probability analysis'],
+      calendar:  ['Deadline Calendar','Upcoming deadlines and funding cycles'],
+      relationships:['Relationship Intelligence','Track contacts and champions'],
+      docs:      ['Document Library','Reusable application assets'],
+      analytics: ['Analytics Dashboard','Performance metrics and insights'],
+      aibuilder: ['AI Application Builder','Generate grant documents and proposals'],
+      sourcing:  ['Live Opportunity Sourcing','AI-powered discovery of new opportunities'],
+      settings:  ['Settings','Configure your profile and preferences'],
+    };
+    const [title, sub] = map[App.currentTab] || ['Mbogiwood',''];
+    document.getElementById('page-title').textContent = title;
+    document.getElementById('page-sub').textContent   = sub;
+  },
+
+  bindEvents(root) {
+    /* Score rings */
+    root.querySelectorAll('[data-score-ring]').forEach(el => {
+      const s = parseInt(el.dataset.scoreRing);
+      const r = 22, circ = 2 * Math.PI * r;
+      const offset = circ - (s / 100) * circ;
+      const clr = s >= 70 ? 'var(--score-high)' : s >= 50 ? 'var(--score-cond)' : 'var(--score-low)';
+      el.innerHTML = `
+        <svg width="54" height="54" viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="${r}" fill="none" stroke="var(--bg-elevated)" stroke-width="5"/>
+          <circle cx="27" cy="27" r="${r}" fill="none" stroke="${clr}" stroke-width="5"
+            stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}"
+            stroke-linecap="round" transform="rotate(-90 27 27)"/>
+        </svg>
+        <div class="score-ring-text" style="color:${clr}">${s}</div>`;
+    });
+
+    /* Pipeline drag-and-drop */
+    root.querySelectorAll('[data-drag-opp]').forEach(el => {
+      el.addEventListener('dragstart', e => {
+        App.dragItem = el.dataset.dragOpp;
+        el.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    });
+    root.querySelectorAll('[data-drop-stage]').forEach(col => {
+      col.addEventListener('dragover', e => { e.preventDefault(); col.classList.add('drag-over'); });
+      col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+      col.addEventListener('drop', e => {
+        e.preventDefault();
+        col.classList.remove('drag-over');
+        if (App.dragItem) {
+          App.moveStage(App.dragItem, col.dataset.dropStage);
+          App.dragItem = null;
+        }
+      });
+    });
+
+    /* Sortable table headers */
+    root.querySelectorAll('th[data-sort]').forEach(th => {
+      th.style.cursor = 'pointer';
+      th.addEventListener('click', () => {
+        const field = th.dataset.sort;
+        if (App.data.sortField === field) {
+          App.data.sortDir = App.data.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          App.data.sortField = field;
+          App.data.sortDir = 'desc';
+        }
+        App.persist();
+        Render.run();
+      });
+    });
+
+    /* Chart bar animations */
+    setTimeout(() => {
+      root.querySelectorAll('[data-bar-pct]').forEach(el => {
+        el.style.width = el.dataset.barPct + '%';
+      });
+    }, 80);
+  },
+};
+
+/* ═══════════════════════════════════════════════════════════
+   PAGES
+   ═══════════════════════════════════════════════════════════ */
+const Pages = {
+
+  /* ── DASHBOARD ── */
+  dashboard() {
+    const m = App.metrics();
+    const opps = App.data.opportunities;
+    const urgent = opps.filter(o => App.daysUntil(o.deadline) <= 14 && App.daysUntil(o.deadline) > 0 && !['awarded','rejected'].includes(o.stage));
+    const topOpps = opps.filter(o => !['awarded','rejected'].includes(o.stage)).sort((a,b) => App.score(b).score - App.score(a).score).slice(0,5);
+
+    return `
+    <div class="page-header">
+      <div class="page-title">Good day, Mbogiwood 👋</div>
+      <div class="page-sub">Here's your opportunity intelligence overview · ${new Date().toLocaleDateString('en-KE',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div>
+    </div>
+
+    <!-- KPI row -->
+    <div class="grid-auto g4 mb-6">
+      ${[
+        {label:'Total Opportunities',val:m.total,icon:'◎',change:'+3 this month',up:true},
+        {label:'Pipeline Value',val:App.fmtVal(m.pipeVal),icon:'◐',change:'Active pipeline',up:true},
+        {label:'Expected Funding',val:App.fmtVal(m.expectedVal),icon:'◆',change:'Probability-weighted',up:true},
+        {label:'Success Rate',val:m.successRate+'%',icon:'◉',change:m.awarded+' awarded',up:m.successRate>30},
+      ].map(s=>`
+        <div class="stat-card">
+          <div class="stat-icon">${App.esc(s.icon)}</div>
+          <div class="stat-label">${App.esc(s.label)}</div>
+          <div class="stat-value">${App.esc(s.val)}</div>
+          <div class="stat-change ${s.up?'up':'down'}">${s.up?'↑':'↓'} ${App.esc(s.change)}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="grid-auto g2-3 mb-6" style="gap:var(--s6)">
+      <!-- Top opportunities -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Top Scored Opportunities</div>
+            <div class="card-sub">Ranked by qualification score</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="App.navigate('qualify')">View all →</button>
+        </div>
+        ${topOpps.length ? topOpps.map(o => {
+          const {score,tier} = App.score(o);
+          return `<div class="flex items-center gap-3 mb-4" style="cursor:pointer" onclick="openDetail('${o.id}')">
+            <div class="score-ring-wrap" data-score-ring="${score}"></div>
+            <div class="flex-1 min-w-0">
+              <div style="font-size:14px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${App.esc(o.name)}</div>
+              <div style="font-size:12px;color:var(--text-muted)">${App.esc(o.type)} · ${App.esc(o.source||'')}</div>
+            </div>
+            <div class="text-right">
+              <div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--accent)">${App.fmtVal(o.value,o.currency)}</div>
+              ${App.dlabel(o)}
+            </div>
+          </div>`;
+        }).join('') : '<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-title">No opportunities yet</div><button class="btn btn-primary" onclick="openAddModal()">+ Add First</button></div>'}
+      </div>
+
+      <!-- Stage distribution -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Pipeline by Stage</div>
+            <div class="card-sub">Distribution across all stages</div>
+          </div>
+        </div>
+        <div class="chart-bar-group">
+          ${STAGES.map(st => {
+            const count = opps.filter(o=>o.stage===st).length;
+            const pct = opps.length ? Math.round(count/opps.length*100) : 0;
+            return `<div class="chart-bar-item">
+              <div class="chart-bar-label">${App.esc(STAGE_LABELS[st])}</div>
+              <div class="chart-bar-track">
+                <div class="chart-bar-fill" data-bar-pct="${pct}" style="width:0;background:${App.esc(STAGE_COLORS[st])}"></div>
+              </div>
+              <div class="chart-bar-val">${count}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Urgent deadlines -->
+    ${urgent.length ? `
+    <div class="card mb-6">
+      <div class="card-header">
+        <div>
+          <div class="card-title">⚡ Urgent Deadlines</div>
+          <div class="card-sub">${urgent.length} opportunity${urgent.length>1?'s':''} with deadlines in the next 14 days</div>
+        </div>
+      </div>
+      <div class="grid-auto g2" style="gap:var(--s3)">
+        ${urgent.map(o => {
+          const {score} = App.score(o);
+          return `<div class="flex items-center gap-3 p-3" style="background:var(--bg-elevated);border-radius:var(--r-md);cursor:pointer;border:1px solid var(--brand-red-dim)" onclick="openDetail('${o.id}')">
+            <span style="font-size:24px;flex-shrink:0">⚡</span>
+            <div class="flex-1 min-w-0">
+              <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${App.esc(o.name)}</div>
+              <div style="font-size:11px;color:var(--text-muted)">${App.esc(o.source||'')} · Score: ${score}</div>
+            </div>
+            ${App.dlabel(o)}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- Stage value chart -->
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Capital by Stage</div><div class="card-sub">Total value at each pipeline stage</div></div>
+        <button class="btn btn-ghost btn-sm" onclick="App.navigate('forecast')">Forecast →</button>
+      </div>
+      <div class="chart-bar-group">
+        ${STAGES.slice(0,5).map(st => {
+          const val = opps.filter(o=>o.stage===st).reduce((s,o)=>s+(o.value||0),0);
+          const maxVal = Math.max(1,...STAGES.map(s=>opps.filter(o=>o.stage===s).reduce((x,o)=>x+(o.value||0),0)));
+          const pct = Math.round(val/maxVal*100);
+          return `<div class="chart-bar-item">
+            <div class="chart-bar-label">${App.esc(STAGE_LABELS[st])}</div>
+            <div class="chart-bar-track">
+              <div class="chart-bar-fill" data-bar-pct="${pct}" style="width:0;background:${App.esc(STAGE_COLORS[st])}"></div>
+            </div>
+            <div class="chart-bar-val" style="font-size:11px">${App.fmtVal(val,'KES')}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  },
+
+  /* ── RADAR ── */
+  radar() {
+    const opps = App.filteredOpps();
+    const types = ['all',...new Set(App.data.opportunities.map(o=>o.type))];
+    const geos  = ['all',...new Set(App.data.opportunities.map(o=>o.geo).filter(Boolean))];
+    const f = App.data.filter;
+
+    return `
+    <div class="page-header">
+      <div class="flex justify-between items-center">
+        <div>
+          <div class="page-title">Opportunity Radar</div>
+          <div class="page-sub">${opps.length} opportunities matching current filters</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddModal()">+ Add Opportunity</button>
+      </div>
+    </div>
+
+    <div class="filter-bar mb-4">
+      <input class="form-input" style="max-width:260px;padding:7px 13px" placeholder="Search name, source, type, tag…"
+        value="${App.esc(f.search||'')}"
+        oninput="App.data.filter.search=this.value;App.persist();Render.run()">
+      <select class="form-select" style="width:auto;padding:7px 13px" onchange="App.data.filter.type=this.value;App.persist();Render.run()">
+        ${types.map(t=>`<option value="${App.esc(t)}" ${f.type===t?'selected':''}>${t==='all'?'All Types':App.esc(t)}</option>`).join('')}
+      </select>
+      <select class="form-select" style="width:auto;padding:7px 13px" onchange="App.data.filter.stage=this.value;App.persist();Render.run()">
+        <option value="all">All Stages</option>
+        ${STAGES.map(s=>`<option value="${s}" ${f.stage===s?'selected':''}>${App.esc(STAGE_LABELS[s])}</option>`).join('')}
+      </select>
+      <select class="form-select" style="width:auto;padding:7px 13px" onchange="App.data.filter.tier=this.value;App.persist();Render.run()">
+        <option value="all">All Tiers</option>
+        ${Object.entries(TIER_LABELS).map(([k,v])=>`<option value="${k}" ${f.tier===k?'selected':''}>${App.esc(v)}</option>`).join('')}
+      </select>
+      <select class="form-select" style="width:auto;padding:7px 13px" onchange="App.data.filter.geo=this.value;App.persist();Render.run()">
+        ${geos.map(g=>`<option value="${App.esc(g)}" ${f.geo===g?'selected':''}>${g==='all'?'All Regions':App.esc(g)}</option>`).join('')}
+      </select>
+      ${Object.values(f).some(v=>v&&v!=='all'&&v!=='desc'&&v!=='score')?
+        `<button class="btn btn-ghost btn-sm" onclick="App.data.filter={type:'all',stage:'all',tier:'all',geo:'all',search:''};App.persist();Render.run()">✕ Clear</button>`:''}
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th data-sort="name" ${App.data.sortField==='name'?'class="sort-'+App.data.sortDir+'"':''}>Opportunity</th>
+          <th>Type</th>
+          <th data-sort="value" ${App.data.sortField==='value'?'class="sort-'+App.data.sortDir+'"':''}>Value</th>
+          <th data-sort="score" ${App.data.sortField==='score'?'class="sort-'+App.data.sortDir+'"':''}>Score</th>
+          <th>Tier</th>
+          <th>Stage</th>
+          <th data-sort="deadline" ${App.data.sortField==='deadline'?'class="sort-'+App.data.sortDir+'"':''}>Deadline</th>
+          <th>Actions</th>
+        </tr></thead>
+        <tbody>
+        ${opps.length ? opps.map(o => {
+          const {score,tier} = App.score(o);
+          return `<tr>
+            <td style="max-width:260px">
+              <div class="cell-name truncate" style="cursor:pointer" onclick="openDetail('${o.id}')">${App.esc(o.name)}</div>
+              <div class="cell-sub">${App.esc(o.source||'')}</div>
+            </td>
+            <td><span class="badge badge-muted">${App.esc(o.type)}</span></td>
+            <td><span style="font-family:var(--font-display);font-weight:700;color:var(--accent)">${App.fmtVal(o.value,o.currency)}</span></td>
+            <td><div class="score-ring-wrap" data-score-ring="${score}" style="width:42px;height:42px"></div></td>
+            <td><span class="badge tier-${tier}">${App.esc(TIER_LABELS[tier])}</span></td>
+            <td><span class="badge" style="background:${App.esc(STAGE_COLORS[o.stage])}22;color:${App.esc(STAGE_COLORS[o.stage])}">${App.esc(STAGE_LABELS[o.stage])}</span></td>
+            <td>${App.dlabel(o)}</td>
+            <td>
+              <div class="flex gap-2">
+                <button class="icon-btn" title="Edit" onclick="openEditModal('${o.id}')">✎</button>
+                <button class="icon-btn" title="Delete" onclick="if(confirm('Delete this opportunity?')){App.deleteOpp('${o.id}');toast('Deleted','error');Render.run()}" style="color:var(--score-low)">✕</button>
+              </div>
+            </td>
+          </tr>`;
+        }).join('') : `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">◎</div><div class="empty-title">No results</div><div class="empty-text">Try adjusting your filters or add a new opportunity</div></div></td></tr>`}
+        </tbody>
+      </table>
+    </div>`;
+  },
+
+  /* ── QUALIFY ── */
+  qualify() {
+    const opps = App.data.opportunities.filter(o => !['awarded','rejected'].includes(o.stage));
+    const scored = opps.map(o => ({...o, ...App.score(o)})).sort((a,b) => b.score - a.score);
+    const tierGroups = {P1:[],P2:[],P3:[],ignore:[]};
+    scored.forEach(o => tierGroups[o.tier].push(o));
+
+    return `
+    <div class="page-header">
+      <div class="page-title">Qualification Engine</div>
+      <div class="page-sub">Automated scoring and priority tiers based on 6-factor model</div>
+    </div>
+
+    <!-- Score factor legend -->
+    <div class="card mb-6">
+      <div class="card-header"><div class="card-title">Scoring Model — 6 Dimensions</div></div>
+      <div class="grid-auto g3" style="gap:var(--s4)">
+        ${[
+          {label:'Funding Value',desc:'Scale of the opportunity',max:25,color:'var(--accent)'},
+          {label:'Strategic Alignment',desc:'Fit with org priorities',max:20,color:'var(--gold)'},
+          {label:'Eligibility',desc:'How well you qualify',max:15,color:'var(--blue)'},
+          {label:'Competition Level',desc:'Inverse of competition',max:20,color:'var(--violet)'},
+          {label:'Relationship Strength',desc:'Existing contacts',max:15,color:'var(--amber)'},
+          {label:'Effort Required',desc:'Inverse of effort',max:5,color:'var(--accent)'},
+        ].map(f=>`<div style="padding:var(--s3) var(--s4);background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-subtle)">
+          <div style="font-size:12.5px;font-weight:700;color:var(--text-primary)">${App.esc(f.label)}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${App.esc(f.desc)}</div>
+          <div style="display:flex;align-items:center;gap:var(--s3);margin-top:var(--s3)">
+            <div class="progress-track" style="flex:1"><div class="progress-fill" data-bar-pct="${Math.round(f.max/100*100)}" style="width:0%;background:${App.esc(f.color)}"></div></div>
+            <span style="font-size:11px;color:var(--text-muted)">${f.max}pts</span>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Tier sections -->
+    ${Object.entries({P1:'⭐ Priority — Top opportunities to pursue now',P2:'◆ Strong — High-value opportunities worth preparing',P3:'◉ Conditional — Pursue if resources allow',ignore:'○ Ignore — Low ROI, deprioritise'}).map(([tier,title]) => {
+      const group = tierGroups[tier];
+      if (!group.length) return '';
+      return `<div class="mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="badge tier-${tier}" style="font-size:13px;padding:4px 12px">${App.esc(title)}</span>
+          <span style="font-size:12px;color:var(--text-muted)">${group.length} opportunit${group.length>1?'ies':'y'}</span>
+        </div>
+        <div class="grid-auto g2" style="gap:var(--s4)">
+          ${group.map(o => `
+            <div class="card card-sm" style="cursor:pointer;border-left:3px solid ${App.esc(STAGE_COLORS[o.stage])}" onclick="openDetail('${o.id}')">
+              <div class="flex items-start gap-4">
+                <div class="score-ring-wrap" data-score-ring="${o.score}"></div>
+                <div class="flex-1 min-w-0">
+                  <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">${App.esc(o.name)}</div>
+                  <div style="font-size:12px;color:var(--text-muted);margin-bottom:var(--s3)">${App.esc(o.source||'')} · ${App.esc(o.type)}</div>
+                  <div class="flex gap-2 flex-wrap">
+                    <span class="badge badge-muted">${App.esc(o.geo||'')}</span>
+                    <span class="badge" style="background:${App.esc(STAGE_COLORS[o.stage])}22;color:${App.esc(STAGE_COLORS[o.stage])}">${App.esc(STAGE_LABELS[o.stage])}</span>
+                    ${App.dlabel(o)}
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div style="font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--accent)">${App.fmtVal(o.value,o.currency)}</div>
+                  <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${o.probability||20}% prob.</div>
+                </div>
+              </div>
+              <div style="margin-top:var(--s3)">
+                <div class="flex justify-between mb-4" style="font-size:11px;color:var(--text-muted)">
+                  <span>Alignment ${o.alignment||5}/10</span>
+                  <span>Competition: ${App.esc(o.competition||'Medium')}</span>
+                  <span>Relationship: ${REL_LEVELS[o.relationship||0]}</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" data-bar-pct="${o.score}" style="width:0%;background:${o.score>=70?'var(--score-high)':o.score>=50?'var(--score-cond)':'var(--score-low)'}"></div>
+                </div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}`;
+  },
+
+  /* ── PIPELINE ── */
+  pipeline() {
+    const opps = App.data.opportunities;
+    const stageOpps = stage => opps.filter(o => o.stage === stage);
+
+    return `
+    <div class="page-header">
+      <div class="flex justify-between items-center">
+        <div>
+          <div class="page-title">Capital Pipeline</div>
+          <div class="page-sub">Drag and drop opportunities between stages</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddModal()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="pipeline-board">
+      ${STAGES.map((stage,i) => {
+        const cols = stageOpps(stage);
+        const colVal = cols.reduce((s,o)=>s+(o.value||0),0);
+        return `<div class="pipeline-col" data-drop-stage="${stage}">
+          <div class="pipeline-col-accent" style="background:${App.esc(STAGE_COLORS[stage])}"></div>
+          <div class="pipeline-col-header">
+            <div>
+              <div class="pipeline-col-title">${App.esc(STAGE_LABELS[stage])}</div>
+              ${colVal ? `<div style="font-size:10px;color:var(--text-muted);margin-top:1px">${App.fmtVal(colVal,'KES')}</div>` : ''}
+            </div>
+            <span class="pipeline-col-count">${cols.length}</span>
+          </div>
+          <div class="pipeline-col-body">
+            ${cols.map(o => {
+              const {score,tier} = App.score(o);
+              return `<div class="pipeline-card" draggable="true" data-drag-opp="${o.id}" onclick="openDetail('${o.id}')">
+                <div class="pipeline-card-name">${App.esc(o.name)}</div>
+                <div class="pipeline-card-meta">${App.esc(o.type)} · ${App.esc(o.source||'')}</div>
+                <div class="pipeline-card-value">${App.fmtVal(o.value,o.currency)}</div>
+                <div class="flex items-center justify-between mt-2">
+                  <span class="badge tier-${tier}" style="font-size:10px">${App.esc(TIER_LABELS[tier])}</span>
+                  ${App.dlabel(o)}
+                </div>
+              </div>`;
+            }).join('')}
+            ${!cols.length ? `<div style="font-size:12px;color:var(--text-dim);text-align:center;padding:var(--s4)">Drop here</div>` : ''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  },
+
+  /* ── FORECAST ── */
+  forecast() {
+    const opps = App.data.opportunities.filter(o => !['awarded','rejected'].includes(o.stage));
+    const total = opps.reduce((s,o)=>s+(o.value||0),0);
+    const expected = opps.reduce((s,o)=>s+(o.value||0)*((o.probability||20)/100),0);
+    const sorted = [...opps].sort((a,b)=>(b.value*b.probability/100)-(a.value*a.probability/100));
+
+    return `
+    <div class="page-header">
+      <div class="page-title">Funding Forecast Engine</div>
+      <div class="page-sub">Expected value analysis across all active opportunities</div>
+    </div>
+
+    <div class="grid-auto g3 mb-6">
+      ${[
+        {label:'Pipeline Value',val:App.fmtVal(total,'KES'),sub:'Total active opportunities',clr:'var(--accent)'},
+        {label:'Expected Value',val:App.fmtVal(expected,'KES'),sub:'Probability-weighted',clr:'var(--gold)'},
+        {label:'Active Opportunities',val:opps.length,sub:'Across all active stages',clr:'var(--blue)'},
+      ].map(s=>`<div class="stat-card">
+        <div class="stat-label">${App.esc(s.label)}</div>
+        <div class="stat-value" style="color:${App.esc(s.clr)}">${App.esc(s.val)}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:var(--s2)">${App.esc(s.sub)}</div>
+      </div>`).join('')}
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Opportunity Forecast Table</div>
+        <div class="card-sub">Expected Value = Funding Value × Probability of Success</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Opportunity</th>
+            <th>Value</th>
+            <th>Probability</th>
+            <th>Expected Value</th>
+            <th>Stage</th>
+          </tr></thead>
+          <tbody>
+          ${sorted.map(o => {
+            const ev = (o.value||0) * ((o.probability||20)/100);
+            return `<tr>
+              <td>
+                <div class="cell-name">${App.esc(o.name)}</div>
+                <div class="cell-sub">${App.esc(o.source||'')} · ${App.esc(o.type)}</div>
+              </td>
+              <td><span style="font-family:var(--font-display);font-weight:700;color:var(--text-primary)">${App.fmtVal(o.value,o.currency)}</span></td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="progress-track" style="width:80px">
+                    <div class="progress-fill" data-bar-pct="${o.probability||20}" style="width:0%;background:${(o.probability||20)>=60?'var(--score-high)':(o.probability||20)>=40?'var(--score-cond)':'var(--score-low)'}"></div>
+                  </div>
+                  <span style="font-size:13px;font-weight:700;color:var(--text-primary)">${o.probability||20}%</span>
+                </div>
+              </td>
+              <td><span style="font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--accent)">${App.fmtVal(ev,'KES')}</span></td>
+              <td><span class="badge" style="background:${App.esc(STAGE_COLORS[o.stage])}22;color:${App.esc(STAGE_COLORS[o.stage])}">${App.esc(STAGE_LABELS[o.stage])}</span></td>
+            </tr>`;
+          }).join('')}
+          <tr style="background:var(--bg-elevated)">
+            <td style="font-weight:700;font-family:var(--font-display)">TOTAL</td>
+            <td style="font-family:var(--font-display);font-weight:700;color:var(--text-primary)">${App.fmtVal(total,'KES')}</td>
+            <td>—</td>
+            <td style="font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--accent)">${App.fmtVal(expected,'KES')}</td>
+            <td>—</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  },
+
+  /* ── CALENDAR ── */
+  calendar() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+    const opps = App.data.opportunities.filter(o => o.deadline && o.deadline !== 'Rolling');
+    const deadlineMap = {};
+    opps.forEach(o => {
+      const k = o.deadline;
+      if (!deadlineMap[k]) deadlineMap[k] = [];
+      deadlineMap[k].push(o);
+    });
+
+    const monthName = now.toLocaleString('en-KE',{month:'long',year:'numeric'});
+    const days = [];
+    for(let i=0;i<firstDay;i++) days.push({empty:true});
+    for(let d=1;d<=daysInMonth;d++) {
+      const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      days.push({d, key, today: d===now.getDate(), events:deadlineMap[key]||[]});
+    }
+
+    return `
+    <div class="page-header">
+      <div class="flex justify-between items-center">
+        <div>
+          <div class="page-title">Deadline Calendar</div>
+          <div class="page-sub">${monthName}</div>
+        </div>
+        <div class="flex gap-3">
+          <span class="badge badge-red">● Deadline &lt;14d</span>
+          <span class="badge badge-gold">● Deadline &lt;45d</span>
+          <span class="badge badge-green">● Open</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="calendar-grid mb-2">
+        ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-day-hdr">${d}</div>`).join('')}
+      </div>
+      <div class="calendar-grid">
+        ${days.map(day => {
+          if (day.empty) return `<div class="cal-day other-month"></div>`;
+          const isToday = day.today;
+          return `<div class="cal-day ${isToday?'today':''}">
+            <div class="cal-day-num">${day.d}</div>
+            ${day.events.map(o => {
+              const d = App.daysUntil(o.deadline);
+              const cls = d<=14?'cal-event-red':d<=45?'cal-event-gold':'cal-event-green';
+              return `<div class="${'cal-event '+cls}" title="${App.esc(o.name)}" onclick="openDetail('${o.id}')">${App.esc(o.name)}</div>`;
+            }).join('')}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-header"><div class="card-title">Upcoming Deadlines</div></div>
+      ${opps.filter(o=>App.daysUntil(o.deadline)>0).sort((a,b)=>App.daysUntil(a.deadline)-App.daysUntil(b.deadline)).slice(0,8).map(o=>{
+        const d=App.daysUntil(o.deadline);
+        return `<div class="flex items-center gap-4 mb-4">
+          <div style="width:60px;text-align:center;flex-shrink:0">
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:${d<=14?'var(--score-low)':d<=45?'var(--gold)':'var(--text-primary)'}">${d}</div>
+            <div style="font-size:10px;color:var(--text-muted)">days</div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div style="font-size:13px;font-weight:700">${App.esc(o.name)}</div>
+            <div style="font-size:11.5px;color:var(--text-muted)">${App.esc(o.source||'')} · ${App.esc(o.deadline)}</div>
+          </div>
+          <span class="badge" style="background:${App.esc(STAGE_COLORS[o.stage])}22;color:${App.esc(STAGE_COLORS[o.stage])}">${App.esc(STAGE_LABELS[o.stage])}</span>
+          <button class="btn btn-ghost btn-sm" onclick="openDetail('${o.id}')">View →</button>
+        </div>`;
+      }).join('')}
+    </div>`;
+  },
+
+  /* ── RELATIONSHIPS ── */
+  relationships() {
+    const rels = App.data.relationships;
+    const avatarColors = ['#2db84b','#4090d8','#e87828','#8868d8','#f0a020','#cc2828'];
+
+    return `
+    <div class="page-header">
+      <div class="flex justify-between items-center">
+        <div>
+          <div class="page-title">Relationship Intelligence</div>
+          <div class="page-sub">${rels.length} contacts tracked</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddRelModal()">+ Add Contact</button>
+      </div>
+    </div>
+
+    <div class="grid-auto g3" style="gap:var(--s5)">
+      ${rels.map((r,i) => {
+        const initials = r.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+        const pct = Math.round(((r.level||1)/5)*100);
+        const opp = r.oppIds?.[0] ? App.getOpp(r.oppIds[0]) : null;
+        const daysSince = r.lastContact ? Math.floor((Date.now()-new Date(r.lastContact))/86400000) : null;
+        return `<div class="rel-card">
+          <div class="flex items-start gap-4">
+            <div class="rel-avatar" style="background:${avatarColors[i%avatarColors.length]}">${initials}</div>
+            <div class="flex-1 min-w-0">
+              <div style="font-size:14px;font-weight:700;color:var(--text-primary)">${App.esc(r.name)}</div>
+              <div style="font-size:12px;color:var(--text-muted)">${App.esc(r.role||'')} · ${App.esc(r.org||'')}</div>
+              ${r.email?`<div style="font-size:11.5px;color:var(--text-dim);margin-top:2px">${App.esc(r.email)}</div>`:''}
+            </div>
+            <span class="badge ${r.level>=4?'badge-green':r.level>=2?'badge-gold':'badge-muted'}">${App.esc(REL_LEVELS[r.level||1])}</span>
+          </div>
+          <div class="rel-level-bar mt-3">
+            <div class="rel-level-fill" data-bar-pct="${pct}" style="width:0%"></div>
+          </div>
+          ${r.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:var(--s3);line-height:1.5;font-style:italic">"${App.esc(r.notes)}"</div>`:''}
+          <div class="flex items-center justify-between mt-3">
+            ${opp?`<span style="font-size:11.5px;color:var(--text-dim)">📎 ${App.esc(opp.name)}</span>`:'<span></span>'}
+            ${daysSince!==null?`<span style="font-size:11px;color:${daysSince>60?'var(--score-low)':daysSince>30?'var(--gold)':'var(--score-high)'}">Last: ${daysSince}d ago</span>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  },
+
+  /* ── DOCUMENTS ── */
+  docs() {
+    const docs = App.data.documents;
+    const types = ['all',...new Set(docs.map(d=>d.type))];
+    const typeColors = {cv:'var(--accent)',portfolio:'var(--gold)',profile:'var(--blue)',budget:'var(--amber)',proposal:'var(--violet)',pitch:'var(--brand-red)',reference:'var(--accent)',report:'var(--gold)'};
+
+    return `
+    <div class="page-header">
+      <div class="flex justify-between items-center">
+        <div>
+          <div class="page-title">Document Library</div>
+          <div class="page-sub">${docs.length} reusable assets</div>
+        </div>
+        <button class="btn btn-primary">+ Upload Asset</button>
+      </div>
+    </div>
+
+    <div class="filter-bar mb-4">
+      ${types.map(t=>`<button class="filter-chip ${(App.data.filter.docType||'all')===t?'active':''}" onclick="App.data.filter.docType='${t}';Render.run()">${t==='all'?'All':t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}
+    </div>
+
+    <div class="grid-auto g2" style="gap:var(--s3)">
+      ${docs.filter(d=>(App.data.filter.docType||'all')==='all'||d.type===App.data.filter.docType).map(doc=>`
+        <div class="doc-card">
+          <div class="doc-icon" style="background:${App.esc(typeColors[doc.type]||'var(--accent)')}22;color:${App.esc(typeColors[doc.type]||'var(--accent)')}">
+            ${App.esc(doc.icon||'📄')}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${App.esc(doc.name)}</div>
+            <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px">${App.esc(doc.type)} · ${App.esc(doc.size)} · Updated ${App.esc(doc.updated)}</div>
+            <div class="flex gap-2 mt-2">${(doc.tags||[]).map(t=>`<span class="badge badge-muted">${App.esc(t)}</span>`).join('')}</div>
+          </div>
+          <div class="flex gap-2 flex-shrink-0">
+            <button class="icon-btn" title="View">👁</button>
+            <button class="icon-btn" title="Download">↓</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  },
+
+  /* ── ANALYTICS ── */
+  analytics() {
+    const opps = App.data.opportunities;
+    const m = App.metrics();
+    const byType = {};
+    opps.forEach(o => { byType[o.type] = (byType[o.type]||0)+1; });
+    const byGeo = {};
+    opps.forEach(o => { if(o.geo) byGeo[o.geo] = (byGeo[o.geo]||0)+1; });
+    const totalByType = Object.values(byType).reduce((s,v)=>s+v,0);
+    const scored = opps.map(o=>App.score(o).score);
+    const avgScore = scored.length ? Math.round(scored.reduce((s,v)=>s+v,0)/scored.length) : 0;
+    const maxScore = scored.length ? Math.max(...scored) : 0;
+
+    return `
+    <div class="page-header">
+      <div class="page-title">Analytics Dashboard</div>
+      <div class="page-sub">Performance metrics and pipeline insights</div>
+    </div>
+
+    <div class="grid-auto g4 mb-6">
+      ${[
+        {label:'Total Tracked',val:m.total,clr:'var(--accent)'},
+        {label:'Active Pipeline',val:m.live,clr:'var(--blue)'},
+        {label:'Avg Score',val:avgScore,clr:'var(--gold)'},
+        {label:'Success Rate',val:m.successRate+'%',clr:'var(--score-high)'},
+      ].map(s=>`<div class="stat-card">
+        <div class="stat-label">${App.esc(s.label)}</div>
+        <div class="stat-value" style="color:${App.esc(s.clr)}">${App.esc(s.val)}</div>
+      </div>`).join('')}
+    </div>
+
+    <div class="grid-auto g2-3 mb-6" style="gap:var(--s6)">
+      <div class="card">
+        <div class="card-header"><div class="card-title">By Opportunity Type</div></div>
+        <div class="chart-bar-group">
+          ${Object.entries(byType).sort((a,b)=>b[1]-a[1]).map(([type,count])=>`<div class="chart-bar-item">
+            <div class="chart-bar-label">${App.esc(type)}</div>
+            <div class="chart-bar-track">
+              <div class="chart-bar-fill" data-bar-pct="${Math.round(count/totalByType*100)}" style="width:0%;background:var(--accent)"></div>
+            </div>
+            <div class="chart-bar-val">${count}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Stage Conversion Funnel</div></div>
+        <div class="chart-bar-group">
+          ${STAGES.map(st=>{
+            const count = opps.filter(o=>o.stage===st).length;
+            const pct = opps.length ? Math.round(count/opps.length*100) : 0;
+            return `<div class="chart-bar-item">
+              <div class="chart-bar-label">${App.esc(STAGE_LABELS[st])}</div>
+              <div class="chart-bar-track">
+                <div class="chart-bar-fill" data-bar-pct="${pct}" style="width:0%;background:${App.esc(STAGE_COLORS[st])}"></div>
+              </div>
+              <div class="chart-bar-val">${count}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-auto g2 mb-6" style="gap:var(--s6)">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Capital by Region</div></div>
+        <div class="chart-bar-group">
+          ${Object.entries(byGeo).sort((a,b)=>b[1]-a[1]).map(([geo,count])=>`<div class="chart-bar-item">
+            <div class="chart-bar-label">${App.esc(geo)}</div>
+            <div class="chart-bar-track">
+              <div class="chart-bar-fill" data-bar-pct="${Math.round(count/opps.length*100)}" style="width:0%;background:var(--gold)"></div>
+            </div>
+            <div class="chart-bar-val">${count}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Financial Summary</div></div>
+        ${[
+          {label:'Total Pipeline Value',val:App.fmtVal(m.pipeVal,'KES'),clr:'var(--text-primary)'},
+          {label:'Expected (Prob. Weighted)',val:App.fmtVal(m.expectedVal,'KES'),clr:'var(--accent)'},
+          {label:'Secured / Awarded',val:App.fmtVal(m.secured,'KES'),clr:'var(--score-high)'},
+          {label:'Average Score',val:avgScore+'/100',clr:'var(--gold)'},
+          {label:'Top Score',val:maxScore+'/100',clr:'var(--blue)'},
+        ].map(row=>`<div class="flex justify-between items-center mb-4 pb-3" style="border-bottom:1px solid var(--border-faint)">
+          <span style="font-size:13px;color:var(--text-secondary)">${App.esc(row.label)}</span>
+          <span style="font-family:var(--font-display);font-size:15px;font-weight:800;color:${App.esc(row.clr)}">${App.esc(row.val)}</span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  },
+
+  /* ── AI BUILDER ── */
+  aibuilder() {
+    const opp = App._detailId ? App.getOpp(App._detailId) : null;
+    const p = App.data.aiProfile;
+    const tasks = [
+      {id:'full',title:'⭐ Complete Package',desc:'All 8 documents in one generation'},
+      {id:'cover',title:'Cover Letter',desc:'Tailored to funder'},
+      {id:'narrative',title:'Project Narrative',desc:'Impact story & theory of change'},
+      {id:'exec',title:'Executive Summary',desc:'1-page compelling pitch'},
+      {id:'budget',title:'Budget Narrative',desc:'Line-item cost justification'},
+      {id:'impact',title:'Impact Framework',desc:'MEL with SMART indicators'},
+      {id:'risk',title:'Risk Register',desc:'Risk assessment & mitigations'},
+      {id:'profile',title:'Org Profile',desc:'Full credentials & track record'},
+    ];
+
+    return `
+    <div class="page-header">
+      <div class="page-title">AI Application Builder</div>
+      <div class="page-sub">Generate grant proposals, cover letters, and application documents using AI</div>
+    </div>
+
+    <div class="grid-auto g2-3" style="gap:var(--s6)">
+      <div>
+        <div class="card mb-4">
+          <div class="card-header"><div class="card-title">Organisation Profile</div></div>
+          ${[
+            ['name','Organisation Name','Mbogiwood Productions'],
+            ['founder','Founder / Applicant',''],
+            ['sector','Sector','Film & Media'],
+            ['location','Location','Nairobi, Kenya'],
+          ].map(([k,lbl,ph])=>`<div class="form-group">
+            <label class="form-label">${lbl}</label>
+            <input class="form-input" value="${App.esc(p[k]||'')}" placeholder="${ph}"
+              oninput="App.data.aiProfile.${k}=this.value;App.persist()">
+          </div>`).join('')}
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" oninput="App.data.aiProfile.desc=this.value;App.persist()"
+              placeholder="What your organisation does, the problem it solves…">${App.esc(p.desc||'')}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Impact & Social Value</label>
+            <textarea class="form-textarea" style="min-height:60px" oninput="App.data.aiProfile.impact=this.value;App.persist()"
+              placeholder="Describe your measurable social, cultural, or economic impact…">${App.esc(p.impact||'')}</textarea>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header"><div class="card-title">Select Opportunity</div></div>
+          <div style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:var(--s2)">
+            ${App.data.opportunities.map(o=>`<div onclick="App._detailId='${o.id}';Render.run()"
+              style="padding:9px 12px;border:1px solid ${App._detailId===o.id?'var(--accent)':'var(--border-subtle)'};border-radius:var(--r-md);cursor:pointer;background:${App._detailId===o.id?'var(--accent-dim)':'var(--bg-elevated)'};transition:all .12s">
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary)">${App.esc(o.name)}</div>
+              <div style="font-size:11px;color:var(--text-muted)">${App.esc(o.source||'')} · ${App.fmtVal(o.value,o.currency)}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card mb-4">
+          <div class="card-header"><div class="card-title">Select Document Type</div></div>
+          <div class="grid-auto g2" style="gap:var(--s3)">
+            ${tasks.map(t=>`<button class="ai-task-btn ${App._aiTask===t.id?'selected':''}" onclick="App._aiTask='${t.id}';Render.run()">
+              <div class="ai-task-title">${App.esc(t.title)}</div>
+              <div class="ai-task-desc">${App.esc(t.desc)}</div>
+            </button>`).join('')}
+          </div>
+        </div>
+
+        <button class="btn btn-primary w-full" style="padding:13px;font-size:14px;justify-content:center;margin-bottom:var(--s4)"
+          onclick="runAIBuilder()" ${!opp?'disabled title="Select an opportunity first"':''}>
+          ${!opp?'Select an opportunity first':'Generate '+tasks.find(t=>t.id===App._aiTask)?.title+' for '+App.esc((opp||{}).name||'')}
+        </button>
+
+        <div id="ai-output-wrap" style="display:${App._aiOutput?'block':'none'}">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Generated Document</div>
+              <div class="flex gap-2">
+                <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard?.writeText(App._aiOutput);toast('Copied!','success')">Copy</button>
+                <button class="btn btn-primary btn-sm" onclick="downloadAI()">Download ↓</button>
+              </div>
+            </div>
+            <div class="ai-output" id="ai-output">${App.esc(App._aiOutput||'')}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  },
+
+  /* ── LIVE SOURCING ── */
+  sourcing() {
+    return `
+    <div class="page-header">
+      <div class="page-title">Live Opportunity Sourcing</div>
+      <div class="page-sub">AI-powered discovery of grants, film funds, and partnerships open to Kenya</div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header"><div class="card-title">Search Parameters</div></div>
+      <div class="form-row mb-4">
+        <div class="form-group mb-0">
+          <label class="form-label">Search Query</label>
+          <input class="form-input" id="source-query" placeholder="e.g. film grants East Africa 2026, documentary fellowships Kenya…" value="film grants Kenya 2026 open">
+        </div>
+        <div class="form-group mb-0">
+          <label class="form-label">Minimum Value (KES)</label>
+          <input class="form-input" id="source-minval" type="number" value="500000" placeholder="500000">
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-primary" onclick="runLiveSourcing()">
+          <span id="source-spinner" style="display:none" class="btn-icon">◌</span>
+          Search Live Opportunities
+        </button>
+        <span style="font-size:12px;color:var(--text-muted);align-self:center">Searches for currently open, high-value opportunities</span>
+      </div>
+    </div>
+
+    <div id="sourcing-results"></div>`;
+  },
+
+  /* ── SETTINGS ── */
+  settings() {
+    const p = App.data.aiProfile;
+    return `
+    <div class="page-header">
+      <div class="page-title">Settings</div>
+      <div class="page-sub">Configure your profile, API, and preferences</div>
+    </div>
+
+    <div class="grid-auto g2" style="gap:var(--s6)">
+      <div>
+        <div class="card mb-4">
+          <div class="card-header"><div class="card-title">AI Configuration</div></div>
+          <div class="form-group">
+            <label class="form-label">Anthropic API Key</label>
+            <input class="form-input" type="password" placeholder="sk-ant-…"
+              value="${App.esc(App.data.apiKey||'')}"
+              oninput="App.data.apiKey=this.value;App.persist()">
+            <div class="form-hint">Required for AI Builder and Live Sourcing features. Stored locally only.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--bg-elevated);border-radius:var(--r-md);font-size:12.5px;color:var(--text-muted)">
+            ${App.data.apiKey ? '✅ API key configured' : '⚠️ No API key — AI features disabled'}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">Data Management</div></div>
+          <div style="display:flex;flex-direction:column;gap:var(--s3)">
+            <button class="btn btn-secondary" onclick="exportData()">Export All Data (JSON)</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">Import Data</button>
+            <input type="file" id="import-file" style="display:none" accept=".json" onchange="importData(this)">
+            <button class="btn btn-danger btn-sm" onclick="if(confirm('Reset all data? This cannot be undone.')){localStorage.removeItem('mbogiwood-v2');location.reload()}">Reset All Data</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Organisation Profile</div></div>
+        ${[
+          ['name','Organisation Name'],['founder','Founder'],['sector','Sector'],
+          ['location','Location'],
+        ].map(([k,lbl])=>`<div class="form-group">
+          <label class="form-label">${lbl}</label>
+          <input class="form-input" value="${App.esc(p[k]||'')}" oninput="App.data.aiProfile.${k}=this.value;App.persist()">
+        </div>`).join('')}
+        <div class="form-group">
+          <label class="form-label">Organisation Description</label>
+          <textarea class="form-textarea" oninput="App.data.aiProfile.desc=this.value;App.persist()">${App.esc(p.desc||'')}</textarea>
+        </div>
+        <button class="btn btn-primary mt-2" onclick="toast('Profile saved','success')">Save Profile</button>
+      </div>
+    </div>`;
+  },
+};
+
+/* ═══════════════════════════════════════════════════════════
+   ADD / EDIT MODAL
+   ═══════════════════════════════════════════════════════════ */
+function oppFormHtml(o) {
+  o = o || {};
+  return `
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Opportunity Name *</label>
+      <input class="form-input" id="f-name" value="${App.esc(o.name||'')}" placeholder="e.g. Sundance Documentary Fund">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Type *</label>
+      <select class="form-select" id="f-type">
+        ${OPPORTUNITY_TYPES.map(t=>`<option value="${t}" ${o.type===t?'selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Source / Funder</label>
+      <input class="form-input" id="f-source" value="${App.esc(o.source||'')}" placeholder="e.g. Sundance Institute">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Geographic Scope</label>
+      <select class="form-select" id="f-geo">
+        ${['Global','Africa','East Africa','Kenya','Europe','North America','Asia'].map(g=>`<option value="${g}" ${o.geo===g?'selected':''}>${g}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Funding Value (KES)</label>
+      <input class="form-input" id="f-value" type="number" value="${o.value||''}" placeholder="e.g. 5000000">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Deadline (or "Rolling")</label>
+      <input class="form-input" id="f-deadline" value="${App.esc(o.deadline||'')}" placeholder="YYYY-MM-DD or Rolling">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Stage</label>
+      <select class="form-select" id="f-stage">
+        ${STAGES.map(s=>`<option value="${s}" ${(o.stage||'discovered')===s?'selected':''}>${STAGE_LABELS[s]}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Probability of Success (%)</label>
+      <input class="form-input" id="f-probability" type="number" min="0" max="100" value="${o.probability||20}" placeholder="20">
+    </div>
+  </div>
+  <div class="form-row-3">
+    <div class="form-group">
+      <label class="form-label">Eligibility</label>
+      <select class="form-select" id="f-eligibility">
+        ${['Open','Restricted','By Invitation'].map(e=>`<option value="${e}" ${o.eligibility===e?'selected':''}>${e}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Competition Level</label>
+      <select class="form-select" id="f-competition">
+        ${['Low','Medium','High'].map(c=>`<option value="${c}" ${o.competition===c?'selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Effort Required (1=Low, 5=High)</label>
+      <input class="form-input" id="f-effort" type="number" min="1" max="5" value="${o.effort||3}">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Strategic Alignment (1–10)</label>
+      <input class="form-input" id="f-alignment" type="number" min="1" max="10" value="${o.alignment||5}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Relationship Strength (0=None, 5=Champion)</label>
+      <input class="form-input" id="f-relationship" type="number" min="0" max="5" value="${o.relationship||0}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Tags (comma-separated)</label>
+    <input class="form-input" id="f-tags" value="${App.esc((o.tags||[]).join(', '))}" placeholder="e.g. film, documentary, youth">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Notes</label>
+    <textarea class="form-textarea" id="f-notes">${App.esc(o.notes||'')}</textarea>
+  </div>`;
+}
+
+function collectForm() {
+  return {
+    name: document.getElementById('f-name')?.value?.trim(),
+    type: document.getElementById('f-type')?.value,
+    source: document.getElementById('f-source')?.value?.trim(),
+    geo: document.getElementById('f-geo')?.value,
+    value: parseFloat(document.getElementById('f-value')?.value) || 0,
+    currency: 'KES',
+    deadline: document.getElementById('f-deadline')?.value?.trim() || 'Rolling',
+    stage: document.getElementById('f-stage')?.value,
+    probability: parseInt(document.getElementById('f-probability')?.value) || 20,
+    eligibility: document.getElementById('f-eligibility')?.value,
+    competition: document.getElementById('f-competition')?.value,
+    effort: parseInt(document.getElementById('f-effort')?.value) || 3,
+    alignment: parseInt(document.getElementById('f-alignment')?.value) || 5,
+    relationship: parseInt(document.getElementById('f-relationship')?.value) || 0,
+    tags: document.getElementById('f-tags')?.value?.split(',').map(t=>t.trim()).filter(Boolean),
+    notes: document.getElementById('f-notes')?.value?.trim(),
+  };
+}
+
+function openAddModal() {
+  App._editId = null;
+  document.getElementById('modal-title').textContent = 'Add New Opportunity';
+  document.getElementById('modal-body').innerHTML = oppFormHtml();
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancel</button>
+    <button class="btn btn-primary" onclick="saveOppForm()">Add Opportunity</button>`;
+  document.getElementById('add-modal').classList.add('active');
+}
+
+function openEditModal(id) {
+  const o = App.getOpp(id);
+  if (!o) return;
+  App._editId = id;
+  document.getElementById('modal-title').textContent = 'Edit Opportunity';
+  document.getElementById('modal-body').innerHTML = oppFormHtml(o);
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancel</button>
+    <button class="btn btn-primary" onclick="saveOppForm()">Save Changes</button>`;
+  document.getElementById('add-modal').classList.add('active');
+}
+
+function saveOppForm() {
+  const data = collectForm();
+  if (!data.name) { toast('Name is required','error'); return; }
+  if (App._editId) {
+    App.updateOpp(App._editId, data);
+    toast('Opportunity updated','success');
+  } else {
+    App.addOpp(data);
+    toast('Opportunity added','success');
+  }
+  closeModal('add-modal');
+  Render.run();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DETAIL OVERLAY
+   ═══════════════════════════════════════════════════════════ */
+function openDetail(id) {
+  const o = App.getOpp(id);
+  if (!o) return;
+  const {score,tier} = App.score(o);
+  const ev = (o.value||0) * ((o.probability||20)/100);
+  const relRels = App.data.relationships.filter(r => (r.oppIds||[]).includes(id));
+
+  document.getElementById('detail-modal-content').innerHTML = `
+    <div class="modal-header">
+      <div style="flex:1;min-width:0">
+        <div class="modal-title" style="white-space:normal;line-height:1.3">${App.esc(o.name)}</div>
+        <div style="display:flex;gap:var(--s2);margin-top:var(--s2);flex-wrap:wrap">
+          <span class="badge badge-muted">${App.esc(o.type)}</span>
+          <span class="badge badge-muted">${App.esc(o.source||'')}</span>
+          <span class="badge tier-${tier}">${App.esc(TIER_LABELS[tier])}</span>
+          <span class="badge" style="background:${App.esc(STAGE_COLORS[o.stage])}22;color:${App.esc(STAGE_COLORS[o.stage])}">${App.esc(STAGE_LABELS[o.stage])}</span>
+          ${App.dlabel(o)}
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('detail-overlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-auto g3 mb-6">
+        ${[
+          {label:'Funding Value',val:App.fmtVal(o.value,o.currency),clr:'var(--accent)'},
+          {label:'Opportunity Score',val:score+'/100',clr:score>=70?'var(--score-high)':score>=50?'var(--score-cond)':'var(--score-low)'},
+          {label:'Expected Value',val:App.fmtVal(ev,'KES'),clr:'var(--gold)'},
+        ].map(s=>`<div style="background:var(--bg-elevated);border-radius:var(--r-md);padding:var(--s4);text-align:center;border:1px solid var(--border-subtle)">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--s2)">${App.esc(s.label)}</div>
+          <div style="font-family:var(--font-display);font-size:20px;font-weight:800;color:${App.esc(s.clr)}">${App.esc(s.val)}</div>
+        </div>`).join('')}
+      </div>
+
+      <div class="form-row mb-4">
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:var(--s2)">Move Stage</div>
+          <select class="form-select" onchange="App.moveStage('${o.id}',this.value)">
+            ${STAGES.map(s=>`<option value="${s}" ${o.stage===s?'selected':''}>${STAGE_LABELS[s]}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:var(--s2)">Probability (%)</div>
+          <input class="form-input" type="number" min="0" max="100" value="${o.probability||20}"
+            onchange="App.updateOpp('${o.id}',{probability:parseInt(this.value)});toast('Updated','success')">
+        </div>
+      </div>
+
+      <div class="grid-auto g2 mb-4" style="gap:var(--s4)">
+        ${[
+          {label:'Eligibility',val:o.eligibility||'Open'},
+          {label:'Competition',val:o.competition||'Medium'},
+          {label:'Effort Required',val:(o.effort||3)+'/5'},
+          {label:'Alignment',val:(o.alignment||5)+'/10'},
+          {label:'Relationship',val:REL_LEVELS[o.relationship||0]},
+          {label:'Geographic Scope',val:o.geo||'—'},
+        ].map(row=>`<div class="flex justify-between items-center" style="background:var(--bg-elevated);padding:var(--s3) var(--s4);border-radius:var(--r-sm)">
+          <span style="font-size:12px;color:var(--text-muted)">${App.esc(row.label)}</span>
+          <span style="font-size:13px;font-weight:700;color:var(--text-primary)">${App.esc(row.val)}</span>
+        </div>`).join('')}
+      </div>
+
+      ${o.tags?.length ? `<div class="flex gap-2 flex-wrap mb-4">${o.tags.map(t=>`<span class="badge badge-muted">${App.esc(t)}</span>`).join('')}</div>` : ''}
+      ${o.notes ? `<div style="background:var(--bg-elevated);border-radius:var(--r-md);padding:var(--s4);font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:var(--s4);border-left:3px solid var(--accent)"><strong>Notes:</strong> ${App.esc(o.notes)}</div>` : ''}
+
+      ${relRels.length ? `<div style="font-size:13px;font-weight:700;margin-bottom:var(--s3)">Related Contacts (${relRels.length})</div>
+        ${relRels.map(r=>`<div style="padding:9px 13px;background:var(--bg-elevated);border-radius:var(--r-md);margin-bottom:var(--s2);font-size:13px">
+          <strong>${App.esc(r.name)}</strong> · ${App.esc(r.role||'')} at ${App.esc(r.org||'')} · ${App.esc(REL_LEVELS[r.level||1])}
+        </div>`).join('')}` : ''}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('detail-overlay')">Close</button>
+      <button class="btn btn-secondary" onclick="closeModal('detail-overlay');App._detailId='${o.id}';App.navigate('aibuilder')">AI Builder →</button>
+      <button class="btn btn-primary" onclick="closeModal('detail-overlay');openEditModal('${o.id}')">Edit</button>
+    </div>`;
+
+  document.getElementById('detail-overlay').classList.add('active');
+  setTimeout(() => {
+    document.querySelectorAll('#detail-modal-content [data-bar-pct]').forEach(el => {
+      el.style.width = el.dataset.barPct + '%';
+    });
+  }, 80);
+}
+
+/* Add relationship modal */
+function openAddRelModal() {
+  document.getElementById('modal-title').textContent = 'Add Contact';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" id="r-name" placeholder="e.g. Sarah Wangari"></div>
+      <div class="form-group"><label class="form-label">Organisation</label><input class="form-input" id="r-org" placeholder="e.g. AMAA"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Role / Title</label><input class="form-input" id="r-role" placeholder="e.g. Program Officer"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="r-email" type="email" placeholder="email@org.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Relationship Level</label>
+        <select class="form-select" id="r-level">${REL_LEVELS.map((l,i)=>`<option value="${i}">${l}</option>`).join('')}</select>
+      </div>
+      <div class="form-group"><label class="form-label">Last Contact Date</label><input class="form-input" id="r-last" type="date"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="r-notes"></textarea></div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancel</button>
+    <button class="btn btn-primary" onclick="saveRelForm()">Add Contact</button>`;
+  document.getElementById('add-modal').classList.add('active');
+}
+
+function saveRelForm() {
+  const name = document.getElementById('r-name')?.value?.trim();
+  if (!name) { toast('Name required','error'); return; }
+  const rel = {
+    id: 'rel-'+Date.now(),
+    name, org: document.getElementById('r-org')?.value?.trim(),
+    role: document.getElementById('r-role')?.value?.trim(),
+    email: document.getElementById('r-email')?.value?.trim(),
+    level: parseInt(document.getElementById('r-level')?.value)||1,
+    lastContact: document.getElementById('r-last')?.value,
+    notes: document.getElementById('r-notes')?.value?.trim(),
+    oppIds: [],
+  };
+  App.data.relationships.push(rel);
+  App.persist();
+  closeModal('add-modal');
+  toast('Contact added','success');
+  Render.run();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AI BUILDER — API call
+   ═══════════════════════════════════════════════════════════ */
+async function runAIBuilder() {
+  if (!App.data.apiKey) { toast('Add your Anthropic API key in Settings','error'); return; }
+  const opp = App._detailId ? App.getOpp(App._detailId) : null;
+  if (!opp) { toast('Select an opportunity first','error'); return; }
+
+  const btn = document.querySelector('[onclick="runAIBuilder()"]');
+  if (btn) { btn.disabled = true; btn.textContent = '⌛ Generating…'; }
+
+  const p = App.data.aiProfile;
+  const task = App._aiTask;
+  const {score} = App.score(opp);
+  const tasks = {
+    full:`Generate a COMPLETE APPLICATION PACKAGE with all 8 sections: (1) Cover Letter, (2) Executive Summary, (3) Project Narrative with problem statement and Kenya context, (4) Theory of Change (inputs→activities→outputs→outcomes→impact), (5) Impact Framework (MEL with SMART indicators), (6) Budget Narrative with line items, (7) Risk Register with 8 risks, (8) Organisational Capacity. Write every section to publication quality. This must be indistinguishable from a professional grant writer's work.`,
+    cover:`Write a highly tailored cover letter to the ${opp.funder||opp.source} Grant Committee. Include a compelling hook, genuine alignment with funder mission, key project highlights, expected impact, the specific amount requested (${App.fmtVal(opp.value,opp.currency)}), and a confident call to action.`,
+    narrative:`Write a full project narrative including: (1) Problem Statement with Kenya-specific data, (2) Proposed Solution and Unique Value Proposition, (3) SMART Objectives, (4) Implementation Plan, (5) Sustainability Plan, (6) Team Capacity.`,
+    exec:`Write a powerful 1-page Executive Summary: Hook → Problem (with data) → Solution → Impact (quantified) → Team → Ask. Every sentence must earn its place.`,
+    budget:`Write a detailed Budget Narrative for ${App.fmtVal(opp.value,opp.currency)} with: Personnel, Equipment, Operations, M&E, Communications, Indirect Costs. Each line: unit cost, quantity, total, justification. Include value-for-money statement.`,
+    impact:`Design a complete MEL Framework: Theory of Change summary, Output/Outcome/Impact indicators with targets, Data collection methods, Baseline plan, Reporting schedule, Learning questions.`,
+    risk:`Create a Risk Register with 8 risks (operational, financial, political, environmental, reputational). For each: Risk title, Category, Likelihood(1-5), Impact(1-5), Rating, Mitigation, Contingency, Owner.`,
+    profile:`Write a comprehensive Organisational Profile covering: Mission & Vision, Track Record, Key Personnel, Governance Structure, Financial Management Systems, Partnerships, Grant Management Experience, Why Uniquely Positioned.`,
+  };
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `You are a world-class grant writer. Your proposals have secured $50M+ across Sub-Saharan Africa.
+
+GRANT: ${opp.name}
+FUNDER: ${opp.source||''}
+AMOUNT: ${App.fmtVal(opp.value,opp.currency)}
+TYPE: ${opp.type}
+NOTES: ${opp.notes||''}
+
+APPLICANT:
+Organisation: ${p.name||'Mbogiwood Productions'}
+Founder: ${p.founder||''}
+Sector: ${p.sector||'Film & Media'}
+Location: ${p.location||'Nairobi, Kenya'}
+Description: ${p.desc||''}
+Impact: ${p.impact||''}
+
+QUALIFICATION SCORE: ${score}/100
+
+TASK: ${tasks[task]||tasks.cover}
+
+Write in formal, authoritative grant writing style. Use full professional prose. Be specific, evidence-based, and Kenya/Africa-contextualised. This must WIN.`
+        }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    App._aiOutput = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    toast('Document generated!','success');
+    Render.run();
+  } catch(e) {
+    toast('Generation failed: '+e.message,'error');
+  }
+  if (btn) { btn.disabled = false; }
+}
+
+function downloadAI() {
+  if (!App._aiOutput) return;
+  const opp = App._detailId ? App.getOpp(App._detailId) : null;
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(App._aiOutput);
+  a.download = (App._aiTask+'_'+(opp?.name||'document').replace(/\s+/g,'_')+'.txt');
+  a.click();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LIVE SOURCING
+   ═══════════════════════════════════════════════════════════ */
+async function runLiveSourcing() {
+  if (!App.data.apiKey) { toast('Add your Anthropic API key in Settings','error'); return; }
+  const q = document.getElementById('source-query')?.value || 'film grants Kenya 2026';
+  const minVal = parseInt(document.getElementById('source-minval')?.value)||500000;
+  const btn = document.querySelector('[onclick="runLiveSourcing()"]');
+  const spinner = document.getElementById('source-spinner');
+  const results = document.getElementById('sourcing-results');
+  if (btn) btn.disabled = true;
+  if (spinner) spinner.style.display = 'inline-block';
+  if (results) results.innerHTML = `<div style="text-align:center;padding:var(--s8);color:var(--text-muted)"><span style="font-size:24px;display:block;margin-bottom:var(--s3)">◌</span>Scanning live sources…</div>`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        messages:[{role:'user',content:`Search for CURRENTLY OPEN grant opportunities, film funds, fellowships, and partnerships for Kenyan creatives and businesses in 2026. Query: "${q}". Return ONLY a raw JSON array. Each item: {name, funder, amount(string), amountKES(number), deadline("YYYY-MM-DD" or "Rolling"), type("Grant"|"Film Fund"|"Fellowship"|"Partnership"|"Investment"), geo, description(2 sentences), url, eligibility(string), competition("Low"|"Medium"|"High")}. Only opportunities worth at least KES ${minVal} accessible to Kenyans with future deadlines. Raw JSON array only.`}]
+      })
+    });
+    const data = await res.json();
+    let txt = '';
+    for(const b of data.content||[]) { if(b.type==='text') txt+=b.text; }
+    const si=txt.indexOf('['),ei=txt.lastIndexOf(']');
+    let parsed = [];
+    if(si>-1&&ei>-1) {
+      parsed = JSON.parse(txt.slice(si,ei+1));
+      parsed = parsed.filter(g => {
+        if(g.deadline==='Rolling') return true;
+        const d = Math.ceil((new Date(g.deadline)-Date.now())/86400000);
+        return d > 0;
+      });
+    }
+
+    if(!parsed.length) {
+      results.innerHTML = `<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-title">No results found</div><div class="empty-text">Try different search terms</div></div>`;
+    } else {
+      results.innerHTML = `<div style="font-size:13px;color:var(--text-muted);margin-bottom:var(--s4)">${parsed.length} live opportunit${parsed.length>1?'ies':'y'} found</div>` +
+        parsed.map(g => `
+          <div class="source-card">
+            <div class="source-card-top">
+              <div>
+                <div class="source-card-name">${App.esc(g.name)}</div>
+                <div class="source-card-funder">${App.esc(g.funder||'')} · ${App.esc(g.type)} · ${App.esc(g.geo||'')}</div>
+              </div>
+              <div class="source-card-amount${(g.amountKES||0)>=10000000?' mega':''}">${App.esc(g.amount||'')}</div>
+            </div>
+            <div class="flex gap-2 mb-3 flex-wrap">
+              <span class="badge badge-muted">${App.esc(g.type)}</span>
+              <span class="badge badge-muted">${App.esc(g.eligibility||'Open')}</span>
+              ${g.deadline==='Rolling'?'<span class="badge badge-blue">Rolling</span>':`<span class="badge ${Math.ceil((new Date(g.deadline)-Date.now())/86400000)<=45?'badge-gold':'badge-muted'}">${App.esc(g.deadline)}</span>`}
+            </div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.55;margin-bottom:var(--s4)">${App.esc(g.description||'')}</div>
+            <div class="flex gap-3">
+              <button class="btn btn-primary btn-sm" onclick='addFromSource(${JSON.stringify(g).replace(/'/g,"&#39;")})'>+ Add to Pipeline</button>
+              ${g.url?`<a href="${App.esc(g.url)}" target="_blank" class="btn btn-ghost btn-sm">Visit Grant →</a>`:''}
+            </div>
+          </div>`).join('');
+    }
+  } catch(e) {
+    if(results) results.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-title">Search failed</div><div class="empty-text">${App.esc(e.message)}</div></div>`;
+  }
+  if(btn) btn.disabled = false;
+  if(spinner) spinner.style.display = 'none';
+}
+
+function addFromSource(g) {
+  App.addOpp({
+    name: g.name, type: g.type||'Grant', source: g.funder||'',
+    value: g.amountKES||0, currency:'KES', deadline: g.deadline||'Rolling',
+    stage:'discovered', probability:25, eligibility:g.eligibility||'Open',
+    competition:g.competition||'Medium', effort:3, alignment:7, relationship:0,
+    geo:g.geo||'', tags:[g.type?.toLowerCase()||'grant'],
+    notes:`From live sourcing. ${g.description||''}`
+  });
+  toast('Added to pipeline','success');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GLOBAL SEARCH
+   ═══════════════════════════════════════════════════════════ */
+function getSearchAccuracy(item, query) {
+  const q = query.toLowerCase();
+  let score = 0;
+  // Exact matches in name get the highest priority
+  const name = (item.name||'').toLowerCase();
+  if (name === q) score += 100;
+  else if (name.startsWith(q)) score += 50;
+  else if (name.includes(q)) score += 25;
+  // Matches in tags are important but weighted lower
+  if (item.tags && item.tags.some(t => t.toLowerCase().includes(q))) score += 15;
+  // Matches in source (funder/company equivalent) or type
+  if (item.source && item.source.toLowerCase().includes(q)) score += 10;
+  if (item.type && item.type.toLowerCase().includes(q)) score += 10;
+  return score;
+}
+
+function globalSearch(q) {
+  const dropdown = document.getElementById('search-dropdown');
+  if (!q || q.length < 2) { dropdown.style.display='none'; return; }
+  const results = App.data.opportunities
+    .map(o => ({ ...o, _score: getSearchAccuracy(o, q) }))
+    .filter(o => o._score > 0)
+    .sort((a, b) => b._score - a._score)
+    .slice(0, 6);
+
+  if (!results.length) { dropdown.style.display='none'; return; }
+  dropdown.innerHTML = results.map(o => {
+    const {score} = App.score(o);
+    const clr = score>=70?'var(--score-high)':score>=50?'var(--score-cond)':'var(--score-low)';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--border-faint);transition:background .1s"
+      onmouseenter="this.style.background='var(--bg-hover)'" onmouseleave="this.style.background=''"
+      onclick="document.getElementById('search-dropdown').style.display='none';document.getElementById('global-search').value='';openDetail('${o.id}')">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${App.esc(o.name)}</div>
+        <div style="font-size:11px;color:var(--text-muted)">${App.esc(o.source||'')} · ${App.esc(o.type)}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:12px;font-weight:700;color:var(--accent)">${App.fmtVal(o.value,o.currency)}</div>
+        <div style="font-size:10px;font-weight:700;color:${clr}">${score}/100</div>
+      </div>
+    </div>`;
+  }).join('') + `<div style="padding:8px 14px;text-align:center">
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('search-dropdown').style.display='none';App.navigate('radar')" style="font-size:12px">View all in Radar →</button>
+  </div>`;
+  dropdown.style.display='block';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NOTIFICATIONS
+   ═══════════════════════════════════════════════════════════ */
+function buildNotifications() {
+  const items = [];
+  App.data.opportunities.forEach(o => {
+    if (!o.deadline || o.deadline==='Rolling' || ['awarded','rejected'].includes(o.stage)) return;
+    const d = App.daysUntil(o.deadline);
+    if (d > 0 && d <= 7) items.push({icon:'⚡',title:`Deadline in ${d}d`,body:o.name,oppId:o.id,clr:'var(--score-low)'});
+    else if (d > 7 && d <= 14) items.push({icon:'◉',title:`Due in ${d}d`,body:o.name,oppId:o.id,clr:'var(--gold)'});
+  });
+  App.data.relationships.filter(r => r.lastContact && Math.floor((Date.now()-new Date(r.lastContact))/86400000)>60)
+    .forEach(r => items.push({icon:'◎',title:'Stale contact',body:`${r.name} · ${r.org||''}`,clr:'var(--violet)'}));
+  if (!App.data.apiKey) items.push({icon:'🔑',title:'AI features disabled',body:'Add Anthropic API key in Settings',action:'settings',clr:'var(--amber)'});
+  return items;
+}
+
+function updateNotifBadge() {
+  const items = buildNotifications();
+  const badge = document.getElementById('notif-count');
+  if (!badge) return;
+  badge.textContent = items.length>9?'9+':items.length;
+  badge.style.display = items.length?'flex':'none';
+}
+
+function toggleNotifications() {
+  const panel = document.getElementById('notif-panel');
+  if (panel.style.display==='block') { panel.style.display='none'; return; }
+  const items = buildNotifications();
+  panel.innerHTML = `
+    <div style="padding:12px 16px 8px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:var(--font-display);font-size:14px;font-weight:700">Notifications</div>
+      <span style="font-size:11px;color:var(--text-muted)">${items.length} item${items.length!==1?'s':''}</span>
+    </div>
+    ${!items.length?`<div style="padding:24px;text-align:center;font-size:13px;color:var(--text-muted)">All clear ✓</div>`:
+    items.map(n=>`<div style="padding:10px 16px;border-bottom:1px solid var(--border-faint);cursor:pointer;display:flex;gap:10px;align-items:flex-start;transition:background .12s"
+      onmouseenter="this.style.background='var(--bg-hover)'" onmouseleave="this.style.background=''"
+      onclick="document.getElementById('notif-panel').style.display='none';${n.oppId?`openDetail('${n.oppId}')`:n.action?`App.navigate('${n.action}')`:''}" >
+      <span style="font-size:14px;flex-shrink:0">${n.icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700;color:${n.clr}">${App.esc(n.title)}</div>
+        <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${App.esc(n.body)}</div>
+      </div>
+    </div>`).join('')}
+    <div style="padding:8px 16px"><button class="btn btn-ghost btn-sm w-full" style="justify-content:center" onclick="document.getElementById('notif-panel').style.display='none'">Dismiss</button></div>`;
+  panel.style.display='block';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════ */
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme', isDark?'light':'dark');
+  document.getElementById('theme-icon').textContent = isDark?'☾':'☀';
+  document.getElementById('theme-label').textContent = isDark?'Dark Mode':'Light Mode';
+  localStorage.setItem('mbogiwood-theme', isDark?'light':'dark');
+}
+
+function collapseToggle() {
+  const shell = document.getElementById('shell');
+  const btn = document.getElementById('collapse-btn');
+  const collapsed = shell.classList.toggle('collapsed');
+  if (btn) btn.textContent = collapsed ? '▶' : '◀';
+  localStorage.setItem('mbogiwood-collapsed', collapsed?'1':'0');
+}
+
+function mobileMenuToggle() {
+  document.getElementById('shell').classList.toggle('mobile-open');
+}
+
+function toast(msg, type='info') {
+  const container = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span style="font-size:16px">${type==='success'?'✓':type==='error'?'✕':'ℹ'}</span><span style="flex:1">${App.esc(msg)}</span>`;
+  container.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(20px)'; t.style.transition='all .3s'; setTimeout(()=>t.remove(),300); }, 2800);
+}
+
+function exportData() {
+  const a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(App.data, null, 2));
+  a.download = 'mbogiwood_data_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  toast('Data exported','success');
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      Object.assign(App.data, d);
+      App.persist();
+      toast('Data imported','success');
+      Render.run();
+    } catch(err) { toast('Invalid JSON file','error'); }
+  };
+  reader.readAsText(file);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+   ═══════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.overlay.active').forEach(el => el.classList.remove('active'));
+    document.getElementById('search-dropdown').style.display='none';
+    document.getElementById('notif-panel').style.display='none';
+    document.getElementById('shell').classList.remove('mobile-open');
+    return;
+  }
+  if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); document.getElementById('global-search').focus(); document.getElementById('global-search').select(); }
+  if ((e.metaKey||e.ctrlKey) && e.key==='n') { e.preventDefault(); openAddModal(); }
+});
+
+/* Close dropdowns on outside click */
+document.addEventListener('click', e => {
+  const sd = document.getElementById('search-dropdown');
+  const si = document.getElementById('global-search');
+  if (sd && si && !si.contains(e.target) && !sd.contains(e.target)) sd.style.display='none';
+  const np = document.getElementById('notif-panel');
+  const nb = document.getElementById('notif-btn');
+  if (np && nb && !nb.contains(e.target) && !np.contains(e.target)) np.style.display='none';
+});
+
+/* ═══════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════ */
+(function init() {
+  /* Restore theme */
+  const savedTheme = localStorage.getItem('mbogiwood-theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.getElementById('theme-icon').textContent = savedTheme==='light'?'☾':'☀';
+    document.getElementById('theme-label').textContent = savedTheme==='light'?'Dark Mode':'Light Mode';
+  }
+  /* Restore sidebar collapse */
+  if (localStorage.getItem('mbogiwood-collapsed')==='1') {
+    document.getElementById('shell').classList.add('collapsed');
+    const btn = document.getElementById('collapse-btn');
+    if (btn) btn.textContent = '▶';
+  }
+  /* Migrate data */
+  if (App.data && Array.isArray(App.data.opportunities)) {
+    App.data.opportunities.forEach(o => {
+      if (!o.id) o.id = 'opp-'+Date.now()+Math.random();
+      if (o.probability===undefined) o.probability=20;
+      if (!o.tags) o.tags=[];
+      if (!o.stage) o.stage='discovered';
+    });
+  }
+  /* Responsive — menu-btn visibility handled by CSS @media (max-width:900px) */
+  window.addEventListener('resize', () => {
+    if (window.innerWidth>900) document.getElementById('shell').classList.remove('mobile-open');
+  });
+  /* High-Accuracy Search Initialization */
+  const searchInput = document.getElementById('global-search');
+  const searchDropdown = document.getElementById('search-dropdown');
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+    if (query.length < 2) {
+      searchDropdown.style.display = 'none';
+      return;
+    }
+    globalSearch(query);
+  });
+
+  App.navigate('dashboard');
+})();
+</script>
+</body>
+</html>
